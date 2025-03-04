@@ -27,10 +27,10 @@ class BaseEdgeCondition(ABC):
         if not edge_types:
             return list(edges_dict.values())
             
-        selected_edges = []
+        selected_edges = {}
         for edge_type in edge_types:
             if edge_type in edges_dict:
-                selected_edges.append(edges_dict[edge_type])
+                selected_edges[edge_type] = edges_dict[edge_type]
         return selected_edges
     
     @abstractmethod 

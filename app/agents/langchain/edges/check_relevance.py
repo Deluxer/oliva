@@ -1,7 +1,7 @@
 from typing import Dict, Any, Literal
 from langchain_core.messages import AIMessage
 
-def check_relevance(state: Dict[str, Any]) -> Literal["generate", "rewrite"]:
+def check_relevance(state) -> Literal["generate", "rewrite"]:
     """Check relevance of retrieved documents."""
     print("---CHECK RELEVANCE---")
     

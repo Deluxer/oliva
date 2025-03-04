@@ -1,9 +1,9 @@
 from langchain.tools.retriever import create_retriever_tool
-from app.agents.langchain.config.json_retriever import setup_retriever
+from app.agents.langchain.vector_store.json_retriever import json_retriever
 
 def search_products():
     """Create and return a blog post search tool"""
-    retriever = setup_retriever()
+    retriever = json_retriever()
     return create_retriever_tool(
         retriever,
         name="search_products",

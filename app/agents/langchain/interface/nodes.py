@@ -27,10 +27,10 @@ class BaseNodesProvider(ABC):
         if not node_types:
             return list(nodes_dict.values())
             
-        selected_nodes = []
+        selected_nodes = {}
         for node_type in node_types:
             if node_type in nodes_dict:
-                selected_nodes.append(nodes_dict[node_type])
+                selected_nodes[node_type] = nodes_dict[node_type]
         return selected_nodes
     
     @abstractmethod 

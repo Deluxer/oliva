@@ -1,11 +1,14 @@
 from typing import Any, Dict, List, Optional, Sequence
 
+from langgraph.graph import StateGraph
+from langchain_core.messages import HumanMessage
+
+from app.agents.langchain.interface.events import AgentEvents
 from app.agents.langchain.factory import AgentFactory
+from app.agents.langchain.state import AgentState
 from app.agents.langchain.tools.tools import ToolProvider
 from app.agents.langchain.edges.edges import EdgeProvider
 from app.agents.langchain.nodes.nodes import NodesProvider
-from langchain_core.messages import HumanMessage
-
 from app.utils.types import EdgeType, ToolType, NodeType
 
 class BaseAgent():
@@ -18,6 +21,7 @@ class BaseAgent():
         self.tool_provider = ToolProvider()
         self.edge_provider = EdgeProvider()
         self.nodes_provider = NodesProvider()
+        self.workflow = StateGraph(AgentState)
         
     def setup_tools(self) -> List[Any]:
         """Get tools based on specified types or all available tools if none specified"""
@@ -31,24 +35,25 @@ class BaseAgent():
         """Get nodes based on specified types or all available nodes if none specified"""
         return self.nodes_provider.get_nodes_by_types(self.node_types)
     
-    def setup_workflow(self) -> Any:
+    def setup_events(self) -> Any:
         """Initialize the RAG workflow for blog posts using AgentFactory
         
         Returns:
             A compiled workflow with agent, retrieval, rewrite and generate nodes
         """
+        # Initialize tools - handle both instances and provider classes
         tools = self.setup_tools()
         edges = self.setup_edges()
         nodes = self.setup_nodes()
-        return AgentFactory.create_agent(
-            tools=tools,
-            edges=edges,
-            nodes=nodes
-        )
+
+        return AgentEvents.mapper(tools, edges, nodes)
+
+    def run(self, workflow: StateGraph) -> Any:
+        return AgentFactory.create_agent(workflow)
     
-    def process_input(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+    def execute(self, workflow: StateGraph, input_data: Dict[str, Any]) -> Dict[str, Any]:
         self.current_query = input_data.get("query", "")
-        workflow = self.setup_workflow()
+        response = self.run(workflow)
         
         # Format input for the workflow
         formatted_input = {
@@ -59,7 +64,7 @@ class BaseAgent():
         
         # Execute workflow and collect results
         results = []
-        for output in workflow.stream(formatted_input):
+        for output in response.stream(formatted_input):
             for key, value in output.items():
                 results.append({
                     "node": key,

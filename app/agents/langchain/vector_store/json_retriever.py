@@ -1,16 +1,15 @@
-from dotenv import load_dotenv
 import json
-from pathlib import Path
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
+from dotenv import load_dotenv
 
 from app.utils.constants import constants
 
 load_dotenv()
 
-def setup_retriever():
+def json_retriever():
     """Setup and return the document retriever"""
     docs = []
     seen_titles = set()  # Track seen titles to avoid duplicates

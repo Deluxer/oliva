@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Literal
 from app.utils.types import EdgeType
-from app.agents.langchain.base.edges import BaseEdgeCondition
+from app.agents.langchain.interface.edges import BaseEdgeCondition
 from app.agents.langchain.edges.grade_documents import grade_documents
 from app.agents.langchain.edges.check_relevance import check_relevance
 

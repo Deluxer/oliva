@@ -1,14 +1,14 @@
-from dotenv import load_dotenv
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from dotenv import load_dotenv
 
 from app.utils.constants import constants
 
 load_dotenv()
 
-def setup_retriever():
+def url_retriever():
     """Setup and return the document retriever"""
     docs = [WebBaseLoader(url).load() for url in constants.URLS]
     docs_list = [item for sublist in docs for item in sublist]

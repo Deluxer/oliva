@@ -1,9 +1,9 @@
 from langchain.tools.retriever import create_retriever_tool
-from app.agents.langchain.config.url_retriever import setup_retriever
+from app.agents.langchain.vector_store.url_retriever import url_retriever
 
 def search_in_blog_posts_tool():
     """Create and return a blog post search tool"""
-    retriever = setup_retriever()
+    retriever = url_retriever()
     return create_retriever_tool(
         retriever,
         name="retrieve_blog_posts",
@@ -12,7 +12,7 @@ def search_in_blog_posts_tool():
 
 def search_in_blog_posts_tool_2():
     """Create and return an advanced blog post search tool"""
-    retriever = setup_retriever()
+    retriever = url_retriever()
     return create_retriever_tool(
         retriever,
         name="retrieve_advanced_blog_posts",
@@ -21,7 +21,7 @@ def search_in_blog_posts_tool_2():
 
 def search_in_blog_posts_tool_3():
     """Create and return a blog post summary tool"""
-    retriever = setup_retriever()
+    retriever = url_retriever()
     return create_retriever_tool(
         retriever,
         name="retrieve_blog_summaries",

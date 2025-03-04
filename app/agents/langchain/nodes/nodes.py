@@ -4,7 +4,7 @@ from app.agents.langchain.nodes.rewriter import rewrite
 from app.agents.langchain.nodes.agent import agent
 from app.agents.langchain.nodes.generate import generate
 from app.utils.types import NodeType
-from app.agents.langchain.base.nodes import BaseNodesProvider
+from app.agents.langchain.interface.nodes import BaseNodesProvider
 
 class NodesProvider(BaseNodesProvider):
     """Node provider for blog post related operations"""

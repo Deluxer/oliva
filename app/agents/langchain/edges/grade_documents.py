@@ -28,9 +28,6 @@ def grade_documents(state) -> Literal["generate", "rewrite"]:
     question = messages[0].content
     docs = messages[-1].content
 
-    # print('-----docs:', docs)
-    # print('-----question:', question)
-    
     # Initialize rewrite_count in state if not present
     if "rewrite_count" not in state:
         state["rewrite_count"] = 0
