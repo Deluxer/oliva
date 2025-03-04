@@ -1,0 +1,36 @@
+[project]
+name = "oliva_assistant"
+version = "0.1.0"
+description = "Voice assistant agent"
+readme = "README.md"
+requires-python = "~=3.11"
+dependencies = [
+    "aiofile",
+    "livekit-agents",
+    "livekit-plugins-openai",
+    "livekit-plugins-silero",
+    "livekit-plugins-deepgram",
+    "python-dotenv",
+    "loguru>=0.7.3",
+    "pydantic-settings>=2.6.1",
+    "langchain",
+    "langchain_community",
+    "langchain_openai",
+    "langgraph",
+    "langchainhub",
+    "langchain_text_splitters",
+    "chromadb",
+    "tiktoken",
+    "beautifulsoup4",
+    "jq"
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.7.2",
+]
+
+[tool.poetry]
+packages = [
+    { include = "app" }
+]
