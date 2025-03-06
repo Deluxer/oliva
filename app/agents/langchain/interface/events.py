@@ -1,23 +1,19 @@
 from typing import Any, List, Type, Union
+from app.agents.langchain.interface.base_provider import BaseProvider
 from langgraph.prebuilt import ToolNode
-
-from .tools import BaseToolProvider
-from .edges import BaseEdgeCondition
-from .nodes import BaseNodesProvider
-
 class AgentEvents:
     @staticmethod
     def mapper(
-        tools: Union[List[Any], Type[BaseToolProvider]],
-        edges: Union[List[Any], Type[BaseEdgeCondition]],
-        nodes: Union[List[Any], Type[BaseNodesProvider]],
+        tools: Union[List[Any], Type[BaseProvider]],
+        edges: Union[List[Any], Type[BaseProvider]],
+        nodes: Union[List[Any], Type[BaseProvider]],
     ) -> List[Any]:
         # Initialize tools - handle both instances and provider classes
         tool_list = tools() if isinstance(tools, type) else tools
         if isinstance(tool_list, list):
-            retrieve = ToolNode(tool_list)
+            retriever_tool = ToolNode(tool_list)
         else:
             # If it's a dictionary, get the values
-            retrieve = ToolNode(list(tool_list.values()))
+            retriever_tool = ToolNode(list(tool_list.values()))
 
-        return [retrieve, edges, nodes]
+        return [retriever_tool, edges, nodes]

@@ -9,9 +9,10 @@ def agent(state):
     Agent that decides whether to use tools or not
     """
     print("---CALL AGENT---")
+
     tool_provider = ToolProvider()
     # Get the actual tool values, not the dictionary
-    tools = list(tool_provider.get_tools_by_types([ToolType.AMAZON_PRODUCTS_SEARCH]).values())
+    tools = list(tool_provider.get_items_by_types([ToolType.BLOG_SEARCH]).values())
     messages = state["messages"]
     model = ChatOpenAI(temperature=0, streaming=True, model=constants.LLM_MODEL)
     model = model.bind_tools(tools)

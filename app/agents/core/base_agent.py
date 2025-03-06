@@ -1,5 +1,6 @@
 from typing import Any, Dict, List, Optional, Sequence
 
+from app.utils.helpers import invoke, stream
 from langgraph.graph import StateGraph
 from langchain_core.messages import HumanMessage
 
@@ -18,22 +19,40 @@ class BaseAgent():
         self.tool_types = tool_types
         self.edge_types = edge_types
         self.node_types = node_types
-        self.tool_provider = ToolProvider()
-        self.edge_provider = EdgeProvider()
-        self.nodes_provider = NodesProvider()
         self.workflow = StateGraph(AgentState)
-        
+        self._tool_provider = None
+        self._edge_provider = None
+        self._nodes_provider = None
+
+    @property
+    def tool_provider(self):
+        if self._tool_provider is None:
+            self._tool_provider = ToolProvider()
+        return self._tool_provider
+
+    @property
+    def edge_provider(self):
+        if self._edge_provider is None:
+            self._edge_provider = EdgeProvider()
+        return self._edge_provider
+
+    @property
+    def nodes_provider(self):
+        if self._nodes_provider is None:
+            self._nodes_provider = NodesProvider()
+        return self._nodes_provider
+
     def setup_tools(self) -> List[Any]:
         """Get tools based on specified types or all available tools if none specified"""
-        return self.tool_provider.get_tools_by_types(self.tool_types)
+        return self.tool_provider.get_items_by_types(self.tool_types)
 
     def setup_edges(self) -> List[Any]:
         """Get edges based on specified types or all available edges if none specified"""
-        return self.edge_provider.get_edges_by_types(self.edge_types)
+        return self.edge_provider.get_items_by_types(self.edge_types)
     
     def setup_nodes(self) -> List[Any]:
         """Get nodes based on specified types or all available nodes if none specified"""
-        return self.nodes_provider.get_nodes_by_types(self.node_types)
+        return self.nodes_provider.get_items_by_types(self.node_types)
     
     def setup_events(self) -> Any:
         """Initialize the RAG workflow for blog posts using AgentFactory
@@ -52,26 +71,16 @@ class BaseAgent():
         return AgentFactory.create_agent(workflow)
     
     def execute(self, workflow: StateGraph, input_data: Dict[str, Any]) -> Dict[str, Any]:
-        self.current_query = input_data.get("query", "")
-        response = self.run(workflow)
+        current_query = input_data.get("query", "")
+        graph = self.run(workflow)
         
-        # Format input for the workflow
         formatted_input = {
             "messages": [
-                HumanMessage(content=self.current_query),
+                HumanMessage(content=current_query),
             ]
         }
         
-        # Execute workflow and collect results
-        results = []
-        for output in response.stream(formatted_input):
-            for key, value in output.items():
-                results.append({
-                    "node": key,
-                    "output": value
-                })
-        
-        return {"results": results}
+        return stream(graph, formatted_input)
     
     @property
     def agent_type(self) -> str:

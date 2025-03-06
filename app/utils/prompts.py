@@ -37,6 +37,6 @@ class Prompts:
       If the content of the docs are relevant to the users question, score them as relevant.
       Give a binary score 'yes' or 'no' score to indicate whether the docs are relevant to the question.
       Yes: The docs are relevant to the question.
-      No: The docs are not relevant to the question.`,"""        
+      No: The docs are not relevant to the question."""        
 
 prompts = Prompts()

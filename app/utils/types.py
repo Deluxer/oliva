@@ -13,4 +13,5 @@ class ToolType(Enum):
     BLOG_SEARCH = "blog_search"
     BLOG_ADVANCE_SEARCH = "blog_advance_search"
     BLOG_SUMMARY = "blog_summary"
-    AMAZON_PRODUCTS_SEARCH = "amazon_products_search"
+    AMAZON_PRODUCTS_SEARCH_BY_JSON = "amazon_products_search_by_json"
+    AMAZON_PRODUCTS_SEARCH_BY_SUPERLINKED = "amazon_products_search_by_superlinked"

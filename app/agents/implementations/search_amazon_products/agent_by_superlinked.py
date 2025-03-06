@@ -4,13 +4,13 @@ from langgraph.graph import END, START
 from app.agents.core.base_agent import BaseAgent
 from app.utils.types import ToolType, EdgeType, NodeType
 
-class SemanticSearchAmazonProductsAgent(BaseAgent):
+class SearchAmazonProductsAgentBySuperlinked(BaseAgent):
     """Agent specialized in searching amazon products"""
     
     def __init__(self):
         super().__init__(
-            tool_types=[ToolType.AMAZON_PRODUCTS_SEARCH],
-            edge_types=[EdgeType.GRADE_DOCUMENTS, EdgeType.CHECK_RELEVANCE],
+            tool_types=[ToolType.AMAZON_PRODUCTS_SEARCH_BY_SUPERLINKED],
+            edge_types=[EdgeType.GRADE_DOCUMENTS],
             node_types=[NodeType.AGENT, NodeType.GENERATE, NodeType.REWRITE]
         )
 

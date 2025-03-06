@@ -12,17 +12,20 @@ dependencies = [
     "livekit-plugins-deepgram",
     "python-dotenv",
     "loguru>=0.7.3",
+    "pydantic>=2,<3",
     "pydantic-settings>=2.6.1",
-    "langchain",
-    "langchain_community",
-    "langchain_openai",
-    "langgraph",
-    "langchainhub",
-    "langchain_text_splitters",
+    "superlinked==17.1.0",
+    "langchain>=0.3.0",
+    "langchain-community>=0.0.10",
+    "langchain-openai>=0.0.5",
+    "langgraph>=0.0.20",
+    "langchainhub>=0.1.14",
+    "langchain-text-splitters>=0.0.1",
     "chromadb",
     "tiktoken",
     "beautifulsoup4",
-    "jq"
+    "jq",
+    "langchain-qdrant",
 ]
 
 [dependency-groups]
