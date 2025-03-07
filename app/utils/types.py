@@ -7,7 +7,7 @@ class EdgeType(Enum):
 class NodeType(Enum):
     AGENT = "agent"
     GENERATE = "generate"
-    REWRITE = "rewriter"  
+    REWRITE = "rewrite"
 
 class ToolType(Enum):
     BLOG_SEARCH = "blog_search"

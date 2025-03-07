@@ -2,6 +2,6 @@
 Node implementations for the Agentic RAG workflow.
 """
 
-from .nodes import NodesProvider
+from .nodes import NodeProvider
 
-__all__ = ['NodesProvider']
+__all__ = ['NodeProvider']

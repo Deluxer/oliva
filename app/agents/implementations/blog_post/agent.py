@@ -13,11 +13,14 @@ class BlogPostAgent(BaseAgent):
         )
     
     def prepare(self):
+        if self._workflow:
+            return self._workflow
+        
         events = self.setup_events()
-        retriever_tool, edges, nodes = events
+        tools_retriever, edges, nodes = events
 
         self.workflow.add_node("agent", nodes[NodeType.AGENT])
-        self.workflow.add_node("retrieve", retriever_tool)
+        self.workflow.add_node("retrieve", self.to_func(tools_retriever))
         self.workflow.add_node("rewrite", nodes[NodeType.REWRITE])
         self.workflow.add_node("generate", nodes[NodeType.GENERATE])
         self.workflow.add_edge(START, "agent")
@@ -29,14 +32,18 @@ class BlogPostAgent(BaseAgent):
         self.workflow.add_conditional_edges(
             "retrieve",
             edges[EdgeType.GRADE_DOCUMENTS],
+            {"generate": "generate", "rewrite": "rewrite"}
         )
         self.workflow.add_edge("generate", END)
         self.workflow.add_edge("rewrite", "agent")
+        self._workflow = self.workflow.compile()
+        
+        return self._workflow
 
-        return self.workflow
-
-    def process(self):
-        message = self.execute(self.prepare(), {
-            "query": "How Harrison Chase defines an agent?"
-        })
-        return message
+    def process(self, input_data: dict):
+        if not self._workflow:
+            self.prepare()
+        
+        query = input_data.get("query", "")
+        result = self.implement({ "query": query })
+        return result

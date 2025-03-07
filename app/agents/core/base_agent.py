@@ -1,6 +1,7 @@
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence, Type, Union
 
-from app.utils.helpers import invoke, stream
+from app.agents.langchain.interface.base_provider import BaseProvider
+from app.utils.helpers import invoke
 from langgraph.graph import StateGraph
 from langchain_core.messages import HumanMessage
 
@@ -9,13 +10,18 @@ from app.agents.langchain.factory import AgentFactory
 from app.agents.langchain.state import AgentState
 from app.agents.langchain.tools.tools import ToolProvider
 from app.agents.langchain.edges.edges import EdgeProvider
-from app.agents.langchain.nodes.nodes import NodesProvider
+from app.agents.langchain.nodes.nodes import NodeProvider
 from app.utils.types import EdgeType, ToolType, NodeType
 
 class BaseAgent():
     """Base class for all agents"""
 
-    def __init__(self, tool_types: Optional[Sequence[ToolType]] = None, edge_types: Optional[Sequence[EdgeType]] = None, node_types: Optional[Sequence[NodeType]] = None):
+    def __init__(
+        self,
+        tool_types: Optional[Sequence[ToolType]] = None, 
+        edge_types: Optional[Sequence[EdgeType]] = None, 
+        node_types: Optional[Sequence[NodeType]] = None
+    ):
         self.tool_types = tool_types
         self.edge_types = edge_types
         self.node_types = node_types
@@ -23,6 +29,7 @@ class BaseAgent():
         self._tool_provider = None
         self._edge_provider = None
         self._nodes_provider = None
+        self._workflow = None
 
     @property
     def tool_provider(self):
@@ -39,7 +46,7 @@ class BaseAgent():
     @property
     def nodes_provider(self):
         if self._nodes_provider is None:
-            self._nodes_provider = NodesProvider()
+            self._nodes_provider = NodeProvider()
         return self._nodes_provider
 
     def setup_tools(self) -> List[Any]:
@@ -55,32 +62,36 @@ class BaseAgent():
         return self.nodes_provider.get_items_by_types(self.node_types)
     
     def setup_events(self) -> Any:
-        """Initialize the RAG workflow for blog posts using AgentFactory
-        
-        Returns:
-            A compiled workflow with agent, retrieval, rewrite and generate nodes
-        """
-        # Initialize tools - handle both instances and provider classes
+        """Initialize workflow components when needed"""
         tools = self.setup_tools()
         edges = self.setup_edges()
         nodes = self.setup_nodes()
 
         return AgentEvents.mapper(tools, edges, nodes)
 
-    def run(self, workflow: StateGraph) -> Any:
-        return AgentFactory.create_agent(workflow)
+    def to_func(self, event_list: Union[List[Any], Type[BaseProvider]]) -> List[Any]:
+        return AgentEvents.transform(event_list)
+
+    # def run(self, workflow: StateGraph) -> Any:
+    #     return AgentFactory.create_agent(workflow)
     
-    def execute(self, workflow: StateGraph, input_data: Dict[str, Any]) -> Dict[str, Any]:
+    def implement(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute the agent workflow without recompiling it"""
         current_query = input_data.get("query", "")
-        graph = self.run(workflow)
-        
+
+        # Ensure query is a non-empty string
+        if not isinstance(current_query, str) or not current_query.strip():
+            return {"messages": ["No valid query provided."]}
+
+        graph = self._workflow
+
         formatted_input = {
             "messages": [
-                HumanMessage(content=current_query),
+                HumanMessage(content=str(current_query)),
             ]
         }
-        
-        return stream(graph, formatted_input)
+
+        return invoke(graph, formatted_input)
     
     @property
     def agent_type(self) -> str:

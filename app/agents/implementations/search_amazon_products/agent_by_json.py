@@ -15,37 +15,36 @@ class SearchAmazonProductsAgentByJson(BaseAgent):
         )
 
     def prepare(self):
+        if self._workflow:
+            return self._workflow
+
         events = self.setup_events()
-        retrieve, edges, nodes = events
+        tools_retriever, edges, nodes = events
 
         self.workflow.add_node("agent", nodes[NodeType.AGENT])
-        self.workflow.add_node("retrieve", retrieve)
+        self.workflow.add_node("retrieve", self.to_func(tools_retriever))
         self.workflow.add_node("rewrite", nodes[NodeType.REWRITE])
         self.workflow.add_node("generate", nodes[NodeType.GENERATE])
-        
         self.workflow.add_edge(START, "agent")
         self.workflow.add_conditional_edges(
             "agent",
             tools_condition,
             {"tools": "retrieve", END: END}
         )
-        
         self.workflow.add_conditional_edges(
             "retrieve",
             edges[EdgeType.GRADE_DOCUMENTS],
             {"generate": "generate", "rewrite": "rewrite"}
         )
-        
         self.workflow.add_edge("generate", END)
-        self.workflow.add_edge("rewrite", "agent")
+        self._workflow = self.workflow.compile()
+        
+        return self._workflow
 
-        return self.workflow
-
-    def process(self):
-        result = self.execute(self.prepare(), {
-            "query": "Find books under $20",
-            "filters": {
-                "category": 'Books'
-            }
-        })
+    def process(self, input_data: dict):
+        if not self._workflow:
+            self.prepare()
+        
+        query = input_data.get("query", "")
+        result = self.implement({ "query": query })
         return result

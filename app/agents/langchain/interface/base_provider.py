@@ -15,7 +15,7 @@ class BaseProvider(Generic[T]):
     @abstractmethod
     def get_items(self) -> Dict[T, Any]:
         return self._items
-    
+
     def get_items_by_types(self, types: Optional[Sequence[T]]) -> List[Any]:
         """Return items by types"""
         items_dict = self.get_items()
@@ -24,6 +24,7 @@ class BaseProvider(Generic[T]):
             return list(items_dict.values())
         
         selected_items = {}
+        print(f"Initializing event: {types}")
         for item_type in types:
             if item_type in items_dict:
                 selected_items[item_type] = items_dict[item_type]
