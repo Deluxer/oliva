@@ -1,6 +1,7 @@
 from typing import Any, List, Type, Union
 from app.agents.langchain.interface.base_provider import BaseProvider
 from langgraph.prebuilt import ToolNode
+
 class AgentEvents:
     @staticmethod
     def mapper(
@@ -8,12 +9,18 @@ class AgentEvents:
         edges: Union[List[Any], Type[BaseProvider]],
         nodes: Union[List[Any], Type[BaseProvider]],
     ) -> List[Any]:
-        # Initialize tools - handle both instances and provider classes
-        tool_list = tools() if isinstance(tools, type) else tools
-        if isinstance(tool_list, list):
-            retriever_tool = ToolNode(tool_list)
-        else:
-            # If it's a dictionary, get the values
-            retriever_tool = ToolNode(list(tool_list.values()))
+        return [tools, edges, nodes]
 
-        return [retriever_tool, edges, nodes]
+    @staticmethod
+    def transform(event_list: Union[List[Any], Type[BaseProvider]]) -> List[Any]:
+        if isinstance(event_list, dict):
+            # Call each function in the dictionary and collect results
+            return ToolNode([func() for func in event_list.values()])
+
+        if isinstance(event_list, list):
+            # If it's a list, return as is
+            return event_list
+
+        if isinstance(event_list, type):
+            # If it's a provider class, instantiate it
+            return event_list()

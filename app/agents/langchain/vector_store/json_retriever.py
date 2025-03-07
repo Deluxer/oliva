@@ -1,4 +1,7 @@
 import json
+import os
+from pathlib import Path
+import pprint
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -11,6 +14,18 @@ load_dotenv()
 
 def json_retriever():
     """Setup and return the document retriever"""
+    # Create data directory if it doesn't exist
+    data_dir = Path("data")
+    data_dir.mkdir(exist_ok=True)
+    
+    # Create persistent directory for Chroma
+    persist_dir = data_dir / "chroma_db"
+    persist_dir.mkdir(exist_ok=True)
+    
+    # Check if dataset exists
+    if not constants.PROCESSED_DATASET_PATH.exists():
+        raise FileNotFoundError(f"Dataset not found at {constants.PROCESSED_DATASET_PATH}. Please ensure the file exists.")
+    
     docs = []
     seen_titles = set()  # Track seen titles to avoid duplicates
     
@@ -41,7 +56,7 @@ def json_retriever():
                 category_str = ', '.join(category) if isinstance(category, list) else str(category)
                 
                 # Create a rich page content that includes price for better matching
-                page_content = f"Title: {title}. Price: ${price:.2f} Category: {category_str}"
+                page_content = f"Title: {title}. Price: ${price:.2f} Category: {category_str} rating: {data.get('rating', '')}"
                 
                 docs.append(Document(
                     page_content=page_content,
@@ -61,9 +76,13 @@ def json_retriever():
     )
     doc_splits = text_splitter.split_documents(docs)
 
+    print("Doc splits:", len(doc_splits))
+
+    # Use persistent storage for Chroma
     vectorstore = Chroma.from_documents(
         documents=doc_splits,
-        collection_name="rag-chroma",
+        collection_name="amazon-products",
         embedding=OpenAIEmbeddings(model=constants.EMBEDDING_MODEL),
+        persist_directory=str(persist_dir)
     )
     return vectorstore.as_retriever()

@@ -22,13 +22,14 @@ class Prompts:
         1. Carefully analyze if the documents contain information that could help answer the question
         2. For price-based queries, check if ANY document matches the price criteria
         3. For category-based queries, check if ANY document matches the category
-        4. If NO documents match the exact criteria but some are close, consider them relevant
-        5. If absolutely no relevant documents exist, respond with 'no' and with the nearest relevant documents
+        4. For product searches, consider a document relevant if it contains similar products even if not exact matches
+        5. If NO documents match the exact criteria but some are close, consider them relevant and mark as 'yes'
+        6. Only mark as 'no' if the documents are completely unrelated or irrelevant
         
         Provide:
         1. A binary score 'yes' or 'no' to indicate document relevance
-        2. A brief explanation of your decision"""
-    GRADE_DOCUMENTS_PROMPT_2 = """You are a grader assessing relevance of retrieved docs to a user question.
+        2. A brief explanation of your decision, including what relevant information was found or why documents were deemed irrelevant"""
+    GRADE_DOCUMENTS_PROMPT_OPT_2 = """You are a grader assessing relevance of retrieved docs to a user question.
       Here are the retrieved docs:
       \n ------- \n
       {context} 
@@ -37,6 +38,14 @@ class Prompts:
       If the content of the docs are relevant to the users question, score them as relevant.
       Give a binary score 'yes' or 'no' score to indicate whether the docs are relevant to the question.
       Yes: The docs are relevant to the question.
-      No: The docs are not relevant to the question."""        
+      No: The docs are not relevant to the question."""
+
+    BLOG_SEARCH_PROMPT = """You are a helpful blog assistant that helps users find blog posts.
+        When a user asks a question, always use the blog_search tool to find relevant blog posts.
+        Make sure to include the user's query in the tool call."""
+
+    AMAZON_SEARCH_PROMPT = """You are a helpful shopping assistant that helps users find products on Amazon.
+        When a user asks a question, always use the search_products_by_json tool to find relevant products.
+        Make sure to include the user's query in the tool call."""
 
 prompts = Prompts()

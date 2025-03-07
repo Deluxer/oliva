@@ -19,7 +19,7 @@ def grade_documents(state) -> Literal["generate", "rewrite"]:
     llm_with_tool = model.with_structured_output(grade)
 
     prompt = PromptTemplate(
-        template=prompts.GRADE_DOCUMENTS_PROMPT_2,
+        template=prompts.GRADE_DOCUMENTS_PROMPT_OPT_2,
         input_variables=["context", "question"],
     )
 
@@ -33,20 +33,23 @@ def grade_documents(state) -> Literal["generate", "rewrite"]:
         state["rewrite_count"] = 0
     
     rewrite_count = state["rewrite_count"]
-    scored_result = chain.invoke({"question": question, "context": docs})
     
-    # After 1 rewrite, generate a "no results found" response
-    if rewrite_count >= 1:
-        print(f"---DECISION: GENERATE NO RESULTS RESPONSE (Attempt {rewrite_count + 1})---")
-        print(f"Explanation: No matching results found after {rewrite_count} rewrite attempts")
-        return "generate"
+    # Define a max rewrite limit to avoid infinite loops
+    MAX_REWRITE_ATTEMPTS = 2  # Adjust as needed
+
+    scored_result = chain.invoke({"question": question, "context": docs})
     
     if scored_result.binary_score == "yes":
         print("---DECISION: DOCS RELEVANT---")
-        print(f"Explanation: {scored_result.explanation}")
         return "generate"
     else:
         print("---DECISION: DOCS NOT RELEVANT---")
         print(f"Explanation: {scored_result.explanation}")
         state["rewrite_count"] = rewrite_count + 1
-        return "rewrite"
+
+        # Stop rewriting after max attempts
+        if state["rewrite_count"] >= MAX_REWRITE_ATTEMPTS:
+            print(f"---MAX REWRITE ATTEMPTS REACHED ({MAX_REWRITE_ATTEMPTS})---")
+            return "generate"  # Prevent infinite loop
+
+    return "rewrite"
