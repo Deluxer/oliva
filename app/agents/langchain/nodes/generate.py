@@ -4,6 +4,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain import hub
 
 from app.utils.constants import constants
+from app.utils.prompts import prompts
 
 def generate(state):
     """Generate answer based on retrieved documents"""
@@ -17,13 +18,7 @@ def generate(state):
     # If we've tried rewriting and still found no results, generate a "no results" response
     if rewrite_count >= 1 and "DOCS NOT RELEVANT" in docs:
         no_results_prompt = PromptTemplate(
-            template="""You are a helpful assistant responding to a product search query.
-            Unfortunately, no products were found matching the exact criteria.
-            Original query: {question}
-            
-            Task: Generate a polite response explaining that no exact matches were found.
-            Suggest broadening the search criteria (e.g. higher price range, different category).
-            """,
+            template=prompts.NO_RESULTS_PROMPT,
             input_variables=["question"]
         )
         llm = ChatOpenAI(model_name=constants.LLM_MODEL, temperature=0, streaming=True)

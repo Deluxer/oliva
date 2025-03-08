@@ -56,7 +56,7 @@ def json_retriever():
                 category_str = ', '.join(category) if isinstance(category, list) else str(category)
                 
                 # Create a rich page content that includes price for better matching
-                page_content = f"Title: {title}. Price: ${price:.2f} Category: {category_str} rating: {data.get('rating', '')}"
+                page_content = f"Title: {title}. Price: ${price:.2f} Category: {category_str} rating: {data.get('review_rating', '')}"
                 
                 docs.append(Document(
                     page_content=page_content,
@@ -65,8 +65,8 @@ def json_retriever():
                         'price': price,  # Store as float for easy comparison
                         'type': data.get('type', ''),
                         'category': category_str,
-                        'rating': data.get('rating', ''),
-                        'reviews': data.get('reviews', '')
+                        'rating': data.get('review_rating', ''),
+                        'reviews': data.get('review_count', '')
                     }
                 ))
 
@@ -76,13 +76,11 @@ def json_retriever():
     )
     doc_splits = text_splitter.split_documents(docs)
 
-    print("Doc splits:", len(doc_splits))
-
     # Use persistent storage for Chroma
     vectorstore = Chroma.from_documents(
         documents=doc_splits,
         collection_name="amazon-products",
         embedding=OpenAIEmbeddings(model=constants.EMBEDDING_MODEL),
-        persist_directory=str(persist_dir)
+        #persist_directory=str(persist_dir)
     )
     return vectorstore.as_retriever()

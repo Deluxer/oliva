@@ -48,4 +48,12 @@ class Prompts:
         When a user asks a question, always use the search_products_by_json tool to find relevant products.
         Make sure to include the user's query in the tool call."""
 
+    NO_RESULTS_PROMPT = """You are a helpful assistant responding to a product search query.
+            Unfortunately, no products were found matching the exact criteria.
+            Original query: {question}
+            
+            Task: Generate a polite response explaining that no exact matches were found.
+            Suggest broadening the search criteria (e.g. higher price range, different category).
+            """
+
 prompts = Prompts()

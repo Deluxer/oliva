@@ -35,7 +35,7 @@ def grade_documents(state) -> Literal["generate", "rewrite"]:
     rewrite_count = state["rewrite_count"]
     
     # Define a max rewrite limit to avoid infinite loops
-    MAX_REWRITE_ATTEMPTS = 2  # Adjust as needed
+    MAX_REWRITE_ATTEMPTS = 2
 
     scored_result = chain.invoke({"question": question, "context": docs})
     
@@ -46,10 +46,10 @@ def grade_documents(state) -> Literal["generate", "rewrite"]:
         print("---DECISION: DOCS NOT RELEVANT---")
         print(f"Explanation: {scored_result.explanation}")
         state["rewrite_count"] = rewrite_count + 1
+        state["explanation"] = scored_result.explanation
 
         # Stop rewriting after max attempts
         if state["rewrite_count"] >= MAX_REWRITE_ATTEMPTS:
-            print(f"---MAX REWRITE ATTEMPTS REACHED ({MAX_REWRITE_ATTEMPTS})---")
-            return "generate"  # Prevent infinite loop
+            return "generate"
 
     return "rewrite"
