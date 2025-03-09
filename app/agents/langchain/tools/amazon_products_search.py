@@ -1,20 +1,17 @@
+from langchain_core.tools import tool
 from app.agents.langchain.vector_store.json_retriever import json_retriever
 from app.agents.langchain.vector_store.sl_amazon_products_retriever import superlinked_amazon_products_retriever
-from langchain.tools.retriever import create_retriever_tool
-from langchain.tools import Tool
+from langchain_core.messages import AIMessage
 
-def by_json():
+@tool('search_products_by_json', description="Tool for searching products based on a user's query.")
+def by_json(query: str):
     """Search for Amazon products using JSON data"""
-    return create_retriever_tool(
-        retriever=json_retriever(),
-        name="search_products_by_json",
-        description="Search for products.Input should be a natural language query describing what you're looking for, including any specific requirements about, title, price, category, rating, reviews, or features.",
-    )
+    retriever = json_retriever()
+    docs = retriever.get_relevant_documents(query)
+    doc_txt = docs[1].page_content
+    return AIMessage(content=doc_txt)
 
-def by_superlinked():
+@tool('search_products_by_superlinked', description="Tool for searching products based on a user's query.")
+def by_superlinked(query: str):
     """Search for Amazon products using Superlinked"""
-    return Tool(
-        func=superlinked_amazon_products_retriever,
-        name="search_products_by_superlinked",
-        description="Search for products.Input should be a natural language query describing what you're looking for, including any specific requirements about, title, price, category, rating, reviews, or features.",
-    )
+    return superlinked_amazon_products_retriever(query)

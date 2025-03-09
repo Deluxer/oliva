@@ -19,12 +19,11 @@ class BaseProvider(Generic[T]):
     def get_items_by_types(self, types: Optional[Sequence[T]]) -> List[Any]:
         """Return items by types"""
         items_dict = self.get_items()
-        # If no types specified, return all items
+        # If no types specified, return empty dictionary
         if not types:
-            return list(items_dict.values())
+            return {}
         
         selected_items = {}
-        print(f"Initializing event: {types}")
         for item_type in types:
             if item_type in items_dict:
                 selected_items[item_type] = items_dict[item_type]

@@ -2,9 +2,10 @@ from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 from typing import Dict, Any
 
+from app.agents.core.agent_state import AgentState
 from app.utils.constants import constants
 
-def rewrite(state) -> Dict[str, Any]:
+def rewrite(state: AgentState) -> Dict[str, Any]:
     messages = state["messages"]
     question = messages[0].content
     rewrite_count = state.get("rewrite_count", 0)

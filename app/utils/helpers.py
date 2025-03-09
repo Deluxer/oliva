@@ -9,10 +9,10 @@ def stream(graph, formatted_input):
             pprint.pprint("---")
             pprint.pprint(value, indent=2, width=80, depth=None)
             pprint.pprint("\n---\n")
-            results.append(value['messages'][0])
+            results.append(value['messages'])
 
-    finalMessage = results[-1]
-    return finalMessage
+    finalMessage = results[0][-1]
+    return finalMessage.content
 
 def invoke(graph, formatted_input):
     response = graph.invoke(formatted_input)

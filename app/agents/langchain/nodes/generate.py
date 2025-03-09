@@ -3,10 +3,11 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain import hub
 
+from app.agents.core.agent_state import AgentState
 from app.utils.constants import constants
 from app.utils.prompts import prompts
 
-def generate(state):
+def generate(state: AgentState):
     """Generate answer based on retrieved documents"""
     print("---GENERATE---")
     messages = state["messages"]
@@ -25,10 +26,10 @@ def generate(state):
         chain = no_results_prompt | llm | StrOutputParser()
         response = chain.invoke({"question": question})
     else:
-    # Prompt
+        # Prompt
         prompt = hub.pull("rlm/rag-prompt")
         llm = ChatOpenAI(model_name=constants.LLM_MODEL, temperature=0, streaming=True)
         chain = prompt | llm | StrOutputParser()
         response = chain.invoke({"context": docs, "question": question})
     
-    return {"messages": [response]}
+    return {"messages": response}

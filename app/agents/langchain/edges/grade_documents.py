@@ -3,13 +3,12 @@ from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 from pydantic import BaseModel, Field
 
+from app.agents.core.agent_state import AgentState
 from app.utils.constants import constants
 from app.utils.prompts import prompts
 
-def grade_documents(state) -> Literal["generate", "rewrite"]:
+def grade_documents(state: AgentState) -> Literal["generate", "rewrite"]:
     """Determines whether the retrieved documents are relevant to the question."""
-    print("---GRADE DOCUMENTS---")
-
     class grade(BaseModel):
         """Binary score for relevance check."""
         binary_score: str = Field(description="Relevance score 'yes' or 'no'")
@@ -27,10 +26,6 @@ def grade_documents(state) -> Literal["generate", "rewrite"]:
     messages = state["messages"]
     question = messages[0].content
     docs = messages[-1].content
-
-    # Initialize rewrite_count in state if not present
-    if "rewrite_count" not in state:
-        state["rewrite_count"] = 0
     
     rewrite_count = state["rewrite_count"]
     
