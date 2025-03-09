@@ -92,9 +92,5 @@ class Constants:
         "Women",
     ]
 
-    QDRANT_DATABASE_URL = SecretStr(os.getenv("QDRANT_URL"))
-    QDRANT_DATABASE_API_KEY = SecretStr(os.getenv("QDRANT_API_KEY"))
-
-
 # Create a singleton instance
 constants = Constants()

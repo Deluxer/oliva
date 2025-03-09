@@ -1,15 +1,15 @@
 from app.agents.schema.superlinked import index
 import superlinked.framework as sl
 
-from app.utils.constants import constants
+from app.agents.config.qdrant import qdrant_config
 
 class SuperlinkedClient:
     def __init__(self):
         self.product_source: sl.InteractiveSource = sl.InteractiveSource(index.product)
 
         self.vector_database = sl.QdrantVectorDatabase(
-            constants.QDRANT_DATABASE_URL,
-            constants.QDRANT_DATABASE_API_KEY,
+            url=qdrant_config.QDRANT_URL.get_secret_value(),
+            api_key=qdrant_config.QDRANT_API_KEY.get_secret_value(),
             default_query_limit=10,
         )     
 
