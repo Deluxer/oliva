@@ -1,8 +1,8 @@
-from langgraph.prebuilt import tools_condition
 from langgraph.graph import END, START
 
 from app.agents.core.base_agent import BaseAgent
-from app.utils.types import ToolType, EdgeType, NodeType
+from app.agents.langchain.factory import AgentFactory
+from app.utils.types import NodeType, ToolType
 
 class SearchAmazonProductsAgentBySuperlinked(BaseAgent):
     """Agent specialized in searching amazon products"""
@@ -10,42 +10,27 @@ class SearchAmazonProductsAgentBySuperlinked(BaseAgent):
     def __init__(self):
         super().__init__(
             tool_types=[ToolType.AMAZON_PRODUCTS_SEARCH_BY_SUPERLINKED],
-            edge_types=[EdgeType.GRADE_DOCUMENTS],
-            node_types=[NodeType.AGENT, NodeType.GENERATE, NodeType.REWRITE]
+            edge_types=[],
+            node_types=[NodeType.AGENT, NodeType.GENERATE]
         )
 
-    def prepare(self):
+    def prepare(self, input_state: dict):
         events = self.setup_events()
-        retrieve, edges, nodes = events
+        tools, _, nodes = events
 
+        input_state["tools"] = tools
         self.workflow.add_node("agent", nodes[NodeType.AGENT])
-        self.workflow.add_node("retrieve", retrieve)
-        self.workflow.add_node("rewrite", nodes[NodeType.REWRITE])
         self.workflow.add_node("generate", nodes[NodeType.GENERATE])
+        return self.workflow
         
+    def graph(self):
         self.workflow.add_edge(START, "agent")
-        self.workflow.add_conditional_edges(
-            "agent",
-            tools_condition,
-            {"tools": "retrieve", END: END}
-        )
-        
-        self.workflow.add_conditional_edges(
-            "retrieve",
-            edges[EdgeType.GRADE_DOCUMENTS],
-            {"generate": "generate", "rewrite": "rewrite"}
-        )
-        
         self.workflow.add_edge("generate", END)
-        self.workflow.add_edge("rewrite", "agent")
-
         return self.workflow
 
-    def process(self):
-        result = self.execute(self.prepare(), {
-            "query": "Find books under $20",
-            "filters": {
-                "category": 'Books'
-            }
-        })
+    def process(self, input_state: dict):
+        self.prepare(input_state)
+        self.graph()
+        
+        result = AgentFactory.create_agent(self.workflow, input_state)
         return result

@@ -1,4 +1,4 @@
-from langgraph.prebuilt import tools_condition
+from langgraph.prebuilt import ToolNode, tools_condition
 from langgraph.graph import END, START
 
 from app.agents.core.base_agent import BaseAgent
@@ -22,7 +22,7 @@ class SearchAmazonProductsAgentByJson(BaseAgent):
         tools_retriever, edges, nodes = events
 
         self.workflow.add_node("agent", nodes[NodeType.AGENT])
-        self.workflow.add_node("retrieve", self.to_func(tools_retriever))
+        self.workflow.add_node("retrieve", ToolNode(tools_retriever.values()))
         self.workflow.add_node("rewrite", nodes[NodeType.REWRITE])
         self.workflow.add_node("generate", nodes[NodeType.GENERATE])
         self.workflow.add_edge(START, "agent")

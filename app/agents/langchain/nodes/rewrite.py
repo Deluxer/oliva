@@ -2,10 +2,10 @@ from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 from typing import Dict, Any
 
+from app.agents.core.agent_state import AgentState
 from app.utils.constants import constants
 
-def rewrite(state: Dict[str, Any]) -> Dict[str, Any]:
-    print("---TRANSFORM QUERY---")
+def rewrite(state: AgentState) -> Dict[str, Any]:
     messages = state["messages"]
     question = messages[0].content
     rewrite_count = state.get("rewrite_count", 0)
@@ -13,10 +13,9 @@ def rewrite(state: Dict[str, Any]) -> Dict[str, Any]:
     # Max rewrite attempts to prevent looping
     MAX_REWRITE_ATTEMPTS = 2
     if rewrite_count >= MAX_REWRITE_ATTEMPTS:
-        print(f"---MAX REWRITE ATTEMPTS REACHED ({MAX_REWRITE_ATTEMPTS})---")
         return {"messages": messages, "rewrite_count": rewrite_count}
 
-    strategy = "Make the question more specific to Harrison Chase" if rewrite_count == 0 else "Broaden search scope"
+    strategy = "Make the question more specific to Amazon products" if rewrite_count == 0 else "Broaden search scope"
 
     msg = [
         HumanMessage(

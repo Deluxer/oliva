@@ -7,7 +7,6 @@ from app.agents.langchain.nodes.rewrite import rewrite
 
 class NodeProvider(BaseProvider[NodeType]):
     """Node provider for blog post related operations"""
-    
     def __init__(self):
         self._node_mapping = {
             NodeType.AGENT: agent,

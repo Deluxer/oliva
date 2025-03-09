@@ -2,8 +2,11 @@ from typing import Annotated, Sequence
 from typing_extensions import TypedDict
 from langchain_core.messages import BaseMessage
 from langgraph.graph.message import add_messages
+from app.utils.types import ToolType
+from typing import Any, Dict
 
 class AgentState(TypedDict):
-    # The add_messages function defines how an update should be processed
-    # Default is to replace. add_messages says "append"
     messages: Annotated[Sequence[BaseMessage], add_messages]
+    rewrite_count: int
+    tools: Dict[ToolType, Any]
+    explanation: str

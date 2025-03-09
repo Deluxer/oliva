@@ -2,15 +2,12 @@ from typing import Any, Dict, Literal
 from app.utils.types import EdgeType
 from app.agents.langchain.interface.base_provider import BaseProvider
 from app.agents.langchain.edges.grade_documents import grade_documents
-from app.agents.langchain.edges.check_relevance import check_relevance
 
 class EdgeProvider(BaseProvider[EdgeType]):
     """Edge provider for blog post related operations"""
-    
     def __init__(self):
         self._edge_mapping = {
-            EdgeType.GRADE_DOCUMENTS: grade_documents,
-            EdgeType.CHECK_RELEVANCE: check_relevance,
+            EdgeType.GRADE_DOCUMENTS: grade_documents
         }
         super().__init__()
     

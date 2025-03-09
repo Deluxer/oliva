@@ -4,6 +4,9 @@ version = "0.1.0"
 description = "Voice assistant agent"
 readme = "README.md"
 requires-python = "~=3.11"
+authors = [
+    {name = "GeraDeluxer", email = "gerardoangeln@gmail.com"}
+]
 dependencies = [
     "aiofile",
     "livekit-agents",
