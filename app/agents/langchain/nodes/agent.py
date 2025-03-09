@@ -21,4 +21,4 @@ def agent(state: AgentState):
 
     agent_response = agent.invoke({"messages": messages})
     
-    return {"messages": messages + agent_response["messages"]}
+    return agent_response

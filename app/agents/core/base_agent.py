@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional, Sequence, Type, Union
+from functools import lru_cache
 
 from langgraph.graph import StateGraph
 
@@ -21,13 +22,23 @@ class BaseAgent():
         edge_types: Optional[Sequence[EdgeType]] = None, 
         node_types: Optional[Sequence[NodeType]] = None
     ):
-        self.tool_types = tool_types
-        self.edge_types = edge_types
-        self.node_types = node_types
+        self.tool_types = tuple(tool_types) if tool_types else None
+        self.edge_types = tuple(edge_types) if edge_types else None
+        self.node_types = tuple(node_types) if node_types else None
         self._tool_provider = None
         self._edge_provider = None
         self._nodes_provider = None
         self.workflow = None
+
+    # def config(
+    #     self,
+    #     tool_types: Optional[Sequence[ToolType]] = None, 
+    #     edge_types: Optional[Sequence[EdgeType]] = None, 
+    #     node_types: Optional[Sequence[NodeType]] = None
+    # ):
+    #     self.tool_types = tuple(tool_types) if tool_types else None
+    #     self.edge_types = tuple(edge_types) if edge_types else None
+    #     self.node_types = tuple(node_types) if node_types else None
 
     @property
     def tool_provider(self) -> ToolProvider:
@@ -47,14 +58,17 @@ class BaseAgent():
             self._nodes_provider = NodeProvider()
         return self._nodes_provider
 
+    # @lru_cache(maxsize=1)
     def setup_tools(self) -> List[Any]:
         """Get tools based on specified types or all available tools if none specified"""
         return self.tool_provider.get_items_by_types(self.tool_types)
 
+    # @lru_cache(maxsize=1)
     def setup_edges(self) -> List[Any]:
         """Get edges based on specified types or all available edges if none specified"""
         return self.edge_provider.get_items_by_types(self.edge_types)
     
+    # @lru_cache(maxsize=1)
     def setup_nodes(self) -> List[Any]:
         """Get nodes based on specified types or all available nodes if none specified"""
         return self.nodes_provider.get_items_by_types(self.node_types)
