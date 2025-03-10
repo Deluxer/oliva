@@ -9,7 +9,6 @@ from app.utils.prompts import prompts
 
 def generate(state: AgentState):
     """Generate answer based on retrieved documents"""
-    print("---GENERATE---")
     messages = state["messages"]
     question = messages[0].content
     last_message = messages[-1]
