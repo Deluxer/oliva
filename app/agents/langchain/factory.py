@@ -1,6 +1,6 @@
 from langgraph.graph import StateGraph
 from langchain_core.messages import HumanMessage
-from app.utils.helpers import stream
+from app.utils.helpers import invoke, stream
 
 class AgentFactory:
     @staticmethod
@@ -15,9 +15,9 @@ class AgentFactory:
         graph = workflow.compile()
 
         formatted_input = {
-            "messages": HumanMessage(content=str(current_query)),
+            "messages": [HumanMessage(content=str(current_query))],
             "tools": input_data.get("tools", []),
             "rewrite_count": 0,
         }
 
-        return stream(graph, formatted_input)
+        return invoke(graph, formatted_input)

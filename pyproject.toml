@@ -10,9 +10,13 @@ authors = [
 dependencies = [
     "aiofile",
     "livekit-agents",
-    "livekit-plugins-openai",
-    "livekit-plugins-silero",
-    "livekit-plugins-deepgram",
+    "livekit-agents>=0.12.12,<0.13",
+    "livekit-plugins-deepgram>=0.6.19,<0.7",
+    "livekit-plugins-openai>=0.10.19,<0.11",
+    "livekit-plugins-silero>=0.7.4,<0.8",
+    "langgraph>=0.2.71,<0.3",
+    "langchain-core>=0.3.34,<0.4",
+    "python-dotenv>=1.0.1,<2",
     "python-dotenv",
     "loguru>=0.7.3",
     "pydantic>=2,<3",
@@ -21,7 +25,6 @@ dependencies = [
     "langchain>=0.3.0",
     "langchain-community>=0.0.10",
     "langchain-openai>=0.0.5",
-    "langgraph>=0.0.20",
     "langchainhub>=0.1.14",
     "langchain-text-splitters>=0.0.1",
     "chromadb",
@@ -34,9 +37,4 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ruff>=0.7.2",
-]
-
-[tool.poetry]
-packages = [
-    { include = "app" }
 ]

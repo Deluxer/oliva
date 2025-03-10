@@ -8,5 +8,5 @@ from typing import Any, Dict
 class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], add_messages]
     rewrite_count: int
-    tools: Dict[ToolType, Any]
+    tools: list[ToolType]
     explanation: str
