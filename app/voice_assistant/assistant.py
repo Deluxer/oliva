@@ -19,6 +19,7 @@ from livekit.agents.llm import (
 )
 from livekit.agents.pipeline import VoicePipelineAgent
 from livekit.plugins import deepgram, openai, silero
+from app.agents.implementations.search_amazon_products.agent_by_superlinked import SearchAmazonProductsAgentBySuperlinked
 
 from app.utils.prompts import Prompts
 
@@ -40,8 +41,6 @@ class SearchProducts(FunctionContext):
             llm.TypeInfo(description="Search for products by title, description, category, price, rating, and review"),
         ],
     ):  
-        from app.agents.implementations.search_amazon_products.agent_by_superlinked import SearchAmazonProductsAgentBySuperlinked
-
         try:
             agent = SearchAmazonProductsAgentBySuperlinked()
             result = agent.process({
@@ -89,7 +88,7 @@ async def entrypoint(ctx: JobContext):
 
     @agent.on("metrics_collected")
     def _on_metrics_collected(mtrcs: metrics.AgentMetrics):
-        metrics.log_metrics(mtrcs)
+        # metrics.log_metrics(mtrcs)
         usage_collector.collect(mtrcs)
 
     async def log_usage():
@@ -121,5 +120,6 @@ if __name__ == "__main__":
         WorkerOptions(
             entrypoint_fnc=entrypoint,
             prewarm_fnc=prewarm,
+            job_memory_warn_mb=1300,
         ),
     )
