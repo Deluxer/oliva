@@ -18,5 +18,4 @@ class SuperlinkedClient:
             indices=[index.product_index],
             vector_database=vector_database,
         )
-        # sl.SuperlinkedRegistry.register(executor)
         self.app = executor.run()

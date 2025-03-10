@@ -1,11 +1,8 @@
-from typing import Any, Dict, List, Optional, Sequence, Type, Union
-from functools import lru_cache
+from typing import Any, List, Optional, Sequence, Type, Union
 
 from langgraph.graph import StateGraph
 
 from app.agents.langchain.interface.base_provider import BaseProvider
-from app.utils.helpers import invoke, stream
-from langchain_core.messages import HumanMessage
 
 from app.agents.langchain.interface.events import AgentEvents
 from app.agents.core.agent_state import AgentState
@@ -22,9 +19,9 @@ class BaseAgent():
         edge_types: Optional[Sequence[EdgeType]] = None, 
         node_types: Optional[Sequence[NodeType]] = None
     ):
-        self.tool_types = tuple(tool_types) if tool_types else None
-        self.edge_types = tuple(edge_types) if edge_types else None
-        self.node_types = tuple(node_types) if node_types else None
+        self.tool_types = tool_types
+        self.edge_types = edge_types
+        self.node_types = node_types
         self._tool_provider = None
         self._edge_provider = None
         self._nodes_provider = None

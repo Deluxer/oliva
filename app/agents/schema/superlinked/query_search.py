@@ -60,8 +60,8 @@ semantic_query = (
     .filter(
         index.product.category
         == sl.Param(
-            "filter_by_cateogry",
-            description="Used to only present items that have a specific cateogry",
+            "filter_by_category",
+            description="Used to only present items that have a specific category",
             options=constants.SPLK_CATEGORIES,
         )
     )
