@@ -11,7 +11,7 @@ class SearchAmazonProductsAgentBySuperlinked(BaseAgent):
         super().__init__(
             tool_types=[ToolType.AMAZON_PRODUCTS_SEARCH_BY_SUPERLINKED],
             edge_types=[],
-            node_types=[NodeType.AGENT, NodeType.GENERATE]
+            node_types=[NodeType.AGENT]
         )
 
     def prepare(self, input_state: dict):
@@ -20,17 +20,12 @@ class SearchAmazonProductsAgentBySuperlinked(BaseAgent):
 
         input_state["tools"] = tools
         self.workflow.add_node("agent", nodes[NodeType.AGENT])
-        self.workflow.add_node("generate", nodes[NodeType.GENERATE])
-        return self.workflow
-        
-    def graph(self):
         self.workflow.add_edge(START, "agent")
-        self.workflow.add_edge("generate", END)
-        return self.workflow
+        self.workflow.add_edge("agent", END)
 
     def process(self, input_state: dict):
         self.prepare(input_state)
-        self.graph()
         
         result = AgentFactory.create_agent(self.workflow, input_state)
+        print("######### result #########", result)
         return result

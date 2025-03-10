@@ -28,7 +28,7 @@ def generate(state: AgentState):
     else:
         # Prompt
         prompt = hub.pull("rlm/rag-prompt")
-        llm = ChatOpenAI(model_name=constants.LLM_MODEL, temperature=0, streaming=True)
+        llm = ChatOpenAI(model_name=constants.LLM_MODEL, temperature=0.3, streaming=True)
         chain = prompt | llm | StrOutputParser()
         response = chain.invoke({"context": docs, "question": question})
     
