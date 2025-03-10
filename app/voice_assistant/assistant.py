@@ -19,7 +19,6 @@ from livekit.agents.llm import (
 )
 from livekit.agents.pipeline import VoicePipelineAgent
 from livekit.plugins import deepgram, openai, silero
-from livekit.agents.pipeline import AgentCallContext
 
 from app.utils.prompts import Prompts
 
@@ -43,20 +42,15 @@ class SearchProducts(FunctionContext):
     ):  
         from app.agents.implementations.search_amazon_products.agent_by_superlinked import SearchAmazonProductsAgentBySuperlinked
 
-        # agent = AgentCallContext.get_current().agent
-        print("################################# CALL RETRIEVER #################################", search_products)
-
         try:
-            print("######### superlinked_amazon_products_retriever #########", search_products)
             agent = SearchAmazonProductsAgentBySuperlinked()
             result = agent.process({
                 "query": search_products
             })
 
             return result
-            # return "Product: shirt, category: clothing, price: $50 rating: 3\nProduct: Albert Einstein category: book  price: $70 rating: 4\nProduct: psicology of money category: book price: $150 rating: 5\nProduct: Samsun Smart TV category: electronics price: $200 rating: 5\nProduct: Blink category: book price: $20 rating: 5"
         except Exception as e:
-            print(f"RPC call failed: {e}")
+            print(f"Superlinked call failed: {e}")
 
         return None
 

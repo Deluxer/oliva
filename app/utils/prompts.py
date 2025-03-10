@@ -55,4 +55,12 @@ class Prompts:
             Suggest broadening the search criteria (e.g. higher price range, different category).
             """
 
+    AGENT_PROMPT_BY_SUPERLINKED = """You are an assistant that helps users find products.
+        If the user asks about products, always use the 'search_products_by_superlinked' tool.
+    """
+
+    AGENT_PROMPT_BY_JSON = """You are an assistant that helps users find products.
+        If the user asks about products, always use the 'search_products_by_json' tool.
+    """
+
 prompts = Prompts()

@@ -17,8 +17,9 @@ class SearchAmazonProductsAgentBySuperlinked(BaseAgent):
     def prepare(self, input_state: dict):
         events = self.setup_events()
         tools, _, nodes = events
-
-        input_state["tools"] = tools
+        tools_list = list(tools.values())
+        input_state["tools"] = tools_list
+        
         self.workflow.add_node("agent", nodes[NodeType.AGENT])
         self.workflow.add_edge(START, "agent")
         self.workflow.add_edge("agent", END)
@@ -27,5 +28,4 @@ class SearchAmazonProductsAgentBySuperlinked(BaseAgent):
         self.prepare(input_state)
         
         result = AgentFactory.create_agent(self.workflow, input_state)
-        print("######### result #########", result)
         return result

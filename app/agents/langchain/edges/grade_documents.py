@@ -35,11 +35,8 @@ def grade_documents(state: AgentState) -> Literal["generate", "rewrite"]:
     scored_result = chain.invoke({"question": question, "context": docs})
     
     if scored_result.binary_score == "yes":
-        print("---DECISION: DOCS RELEVANT---")
         return "generate"
     else:
-        print("---DECISION: DOCS NOT RELEVANT---")
-        print(f"Explanation: {scored_result.explanation}")
         state["rewrite_count"] = rewrite_count + 1
         state["explanation"] = scored_result.explanation
 

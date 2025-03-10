@@ -7,7 +7,7 @@ from langchain_core.messages import AIMessage
 def by_json(query: str):
     """Search for Amazon products using JSON data"""
     retriever = json_retriever()
-    docs = retriever.get_relevant_documents(query)
+    docs = retriever.invoke(query)
     doc_txt = docs[1].page_content
     return AIMessage(content=doc_txt)
 
