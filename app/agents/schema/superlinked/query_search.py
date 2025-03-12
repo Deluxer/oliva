@@ -40,7 +40,7 @@ base_query = (
         index.product.type
         == sl.Param(
             "filter_by_type",
-            description="Used to only present items that have a specific type",
+            description="Used to only present items that have a specific type, if not, ignore this filter",
             options=constants.SPLK_TYPES,
         )
     )
@@ -61,7 +61,7 @@ semantic_query = (
         index.product.category
         == sl.Param(
             "filter_by_category",
-            description="Used to only present items that have a specific category",
+            description="Used to only present items that have a specific category, if not, ignore this filter",
             options=constants.SPLK_CATEGORIES,
         )
     )

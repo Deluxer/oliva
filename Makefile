@@ -1,4 +1,4 @@
-start-oliva:
+oliva-start:
 	uv run python -m app.voice_assistant.assistant start
 
 agent-search-by-superlinked:
