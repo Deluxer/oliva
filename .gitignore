@@ -167,6 +167,7 @@ cython_debug/
 # Data
 data/
 in_memory_vdb/
+.langgraph_api
 
 # MacOs
 .DS_Store 

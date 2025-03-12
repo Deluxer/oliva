@@ -82,7 +82,7 @@ docker run -p 6333:6333 -p 6334:6334 \
 
 ### Voice assistant
 ```bash
-make start-oliva
+make oliva-start
 ```
 
 ### Voice assistant frontend

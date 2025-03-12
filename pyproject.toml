@@ -3,7 +3,7 @@ name = "oliva_assistant"
 version = "0.1.0"
 description = "Voice assistant agent"
 readme = "README.md"
-requires-python = "~=3.11"
+requires-python = ">=3.12"
 authors = [
     {name = "GeraDeluxer", email = "gerardoangeln@gmail.com"}
 ]
@@ -29,12 +29,8 @@ dependencies = [
     "langchain-text-splitters>=0.0.1",
     "chromadb",
     "tiktoken",
-    "beautifulsoup4",
-    "jq",
     "langchain-qdrant",
 ]
 
-[dependency-groups]
-dev = [
-    "ruff>=0.7.2",
-]
+[tool.setuptools]
+packages = ["app", "data", "assets", "use_cases"]

@@ -1,5 +1,7 @@
+from langgraph.graph import END, START, StateGraph
+from app.agents.core.agent_state import AgentState
+from functools import lru_cache
 from langgraph.prebuilt import ToolNode, tools_condition
-from langgraph.graph import END, START
 
 from app.agents.core.base_agent import BaseAgent
 from app.agents.langchain.factory import AgentFactory
@@ -7,39 +9,61 @@ from app.utils.types import ToolType, EdgeType, NodeType
 
 class SearchAmazonProductsAgentByJson(BaseAgent):
     """Agent specialized in searching amazon products"""
+    _instance = None
+    
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
     
     def __init__(self):
-        super().__init__(
-            tool_types=[ToolType.AMAZON_PRODUCTS_SEARCH_BY_JSON],
-            edge_types=[EdgeType.GRADE_DOCUMENTS],
-            node_types=[NodeType.AGENT, NodeType.GENERATE, NodeType.REWRITE]
-        )
+        if not hasattr(self, '_initialized'):
+            super().__init__(
+                tool_types=[ToolType.AMAZON_PRODUCTS_SEARCH_BY_JSON],
+                edge_types=[EdgeType.GRADE_DOCUMENTS],
+                node_types=[NodeType.AGENT, NodeType.GENERATE, NodeType.REWRITE]
+            )
+            self._workflow = None
+            self._initialized = True
 
-    def prepare(self, input_state: dict):
+    @lru_cache(maxsize=1)
+    def prepare(self):
+        """Initialize workflow components and configure the graph structure."""
+        self._workflow = StateGraph(AgentState)
+
         events = self.setup_events()
         tools, edges, nodes = events
-        tools_list = list(tools.values())
-        input_state["tools"] = tools_list
-        
-        self.workflow.add_node("agent", nodes[NodeType.AGENT])
-        self.workflow.add_node("retrieve", ToolNode(tools_list))
-        self.workflow.add_node("rewrite", nodes[NodeType.REWRITE])
-        self.workflow.add_node("generate", nodes[NodeType.GENERATE])
-        self.workflow.add_edge(START, "agent")
-        self.workflow.add_conditional_edges(
+        agent = self.inject_tools_in_node(tools, nodes[NodeType.AGENT])
+
+        self._workflow.add_node("agent", agent)
+        self._workflow.add_node("retrieve", ToolNode(tools))
+        self._workflow.add_node("rewrite", nodes[NodeType.REWRITE])
+        self._workflow.add_node("generate", nodes[NodeType.GENERATE])
+        self._workflow.add_edge(START, "agent")
+        self._workflow.add_conditional_edges(
             "agent",
             tools_condition,
             {"tools": "retrieve", END: END}
         )
-        self.workflow.add_conditional_edges(
+        self._workflow.add_conditional_edges(
             "retrieve",
             edges[EdgeType.GRADE_DOCUMENTS],
             {"generate": "generate", "rewrite": "rewrite"}
         )
-        self.workflow.add_edge("generate", END)
+        self._workflow.add_edge("generate", END)
 
     def process(self, input_state: dict):
-        self.prepare(input_state)
+        self.prepare()
         
-        result = AgentFactory.create_agent(self.workflow, input_state)
+        result = AgentFactory.create_agent(self._workflow, input_state)
         return result
+
+    def studio(self):
+        """Compile workflow for LangGraph Studio"""
+        self.prepare()
+        return self._workflow.compile()
+
+agent = SearchAmazonProductsAgentByJson()
+
+# Initialize graph for langgraph.json
+graph = agent.studio()

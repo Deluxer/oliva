@@ -1,11 +1,10 @@
-from app.agents.implementations.search_amazon_products.agent_by_json import SearchAmazonProductsAgentByJson
 import time
 start_time = time.time()
+from app.agents.implementations.search_amazon_products.agent_by_json import agent
 
 def agent_search_in_amazon_products_by_json():
     """Search amazon products using the SearchAmazonProductsAgentByJson"""
     try:
-        agent = SearchAmazonProductsAgentByJson()
         result = agent.process({
             "query": "products with a price lower than 100 and a rating bigger than 3"
         })

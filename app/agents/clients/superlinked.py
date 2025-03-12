@@ -19,3 +19,5 @@ class SuperlinkedClient:
             vector_database=vector_database,
         )
         self.app = executor.run()
+
+superlinked = SuperlinkedClient()

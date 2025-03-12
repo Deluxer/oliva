@@ -1,0 +1,13 @@
+{
+    "name": "Search Products by Superlinked",
+    "dockerfile_lines": [],
+    "graphs": {
+      "agent": "./app/agents/implementations/search_amazon_products/agent_by_superlinked.py:graph"
+    },
+    "env": ".env",
+    "python_path": ".venv/bin/python",
+    "python_version": "3.12",
+    "dependencies": [
+      "."
+    ]
+  }
