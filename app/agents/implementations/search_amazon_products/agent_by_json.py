@@ -65,5 +65,5 @@ class SearchAmazonProductsAgentByJson(BaseAgent):
 
 agent = SearchAmazonProductsAgentByJson()
 
-# Initialize graph for langgraph.json
+# Initialize graph for LangGraph Studio
 graph = agent.studio()

@@ -30,7 +30,7 @@ def url_retriever():
     # Create vectorstore and initialize retriever
     vectorstore = Chroma.from_documents(
         documents=doc_splits,
-        collection_name="rag-chroma",
+        # collection_name="rag-chroma",
         embedding=OpenAIEmbeddings(model=constants.EMBEDDING_MODEL),
     )
     

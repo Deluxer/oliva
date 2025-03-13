@@ -6,3 +6,6 @@ agent-search-by-superlinked:
 
 agent-search-by-json:
 	uv run python -m use_cases.agent_search_by_json
+
+agent-blog-post:
+	uv run python -m use_cases.agent_blog_post_url
