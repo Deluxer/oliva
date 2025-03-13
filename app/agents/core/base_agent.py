@@ -8,7 +8,13 @@ from app.agents.langchain.nodes.nodes import NodeProvider
 from app.utils.types import EdgeType, ToolType, NodeType
 
 class BaseAgent():
+    _instance = None
     """Base class for all agents"""
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+    
     def __init__(
         self,
         tool_types: Optional[Sequence[ToolType]] = None, 

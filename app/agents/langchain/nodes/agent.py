@@ -17,8 +17,7 @@ def agent(state: AgentState):
     agent = create_react_agent(
         model,
         tools,
-        prompt=prompts.AGENT_PROMPT_BY_JSON,
-        debug=False
+        prompt=prompts.BLOG_SEARCH_PROMPT,
     )
 
     agent_response = agent.invoke({"messages": messages})

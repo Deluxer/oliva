@@ -1,7 +1,7 @@
 [project]
-name = "oliva_assistant"
+name = "oliva_multi_agent"
 version = "0.1.0"
-description = "Voice assistant agent"
+description = "Oliva Multi-Agent Assistant"
 readme = "README.md"
 requires-python = ">=3.12"
 authors = [
@@ -30,6 +30,7 @@ dependencies = [
     "chromadb",
     "tiktoken",
     "langchain-qdrant",
+    "beautifulsoup4",
 ]
 
 [tool.setuptools]

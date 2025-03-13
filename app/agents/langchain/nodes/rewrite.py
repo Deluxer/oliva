@@ -15,7 +15,7 @@ def rewrite(state: AgentState) -> Dict[str, Any]:
     if rewrite_count >= MAX_REWRITE_ATTEMPTS:
         return {"messages": messages, "rewrite_count": rewrite_count}
 
-    strategy = "Make the question more specific to Amazon products" if rewrite_count == 0 else "Broaden search scope"
+    strategy = "Make the question more specific" if rewrite_count == 0 else "Broaden search scope"
 
     msg = [
         HumanMessage(
