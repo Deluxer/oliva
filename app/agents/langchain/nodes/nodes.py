@@ -14,6 +14,7 @@ class NodeProvider(BaseProvider[NodeType]):
             NodeType.AGENT: ("app.agents.langchain.nodes.agent", "agent"),
             NodeType.GENERATE: ("app.agents.langchain.nodes.generate", "generate"),
             NodeType.REWRITE: ("app.agents.langchain.nodes.rewrite", "rewrite"),
+            NodeType.SUPERVISOR: ("app.agents.langchain.nodes.supervisor", "supervisor"),
         }
         super().__init__()
 

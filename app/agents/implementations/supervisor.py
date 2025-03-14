@@ -1,15 +1,17 @@
 from langgraph.graph import END, START, StateGraph
 from app.agents.core.agent_state import AgentState
 from functools import lru_cache
-from typing import Dict, Any
+from typing import Dict, Any, TypedDict
+from rich import print as rprint
 
 from app.agents.core.base_agent import BaseAgent
+from app.agents.implementations.blog_post.agent import graph as graph_blog
+from app.agents.implementations.search_amazon_products.agent_by_superlinked import graph as graph_search_by_superlinked
 from app.agents.langchain.factory import AgentFactory
-from app.utils.types import NodeType, ToolType
-from app.utils.prompts import prompts
+from app.utils.types import NodeType
 
-class SearchAmazonProductsAgentBySuperlinked(BaseAgent):
-    """Agent specialized in searching amazon products"""
+class SupervisorAgent(BaseAgent):
+    """Agent specialized in supervising other agents"""
     _instance = None
     
     def __new__(cls):
@@ -17,33 +19,36 @@ class SearchAmazonProductsAgentBySuperlinked(BaseAgent):
             cls._instance = super().__new__(cls)
             cls._instance.__init__()
         return cls._instance
-    
+
     def __init__(self):
         if not hasattr(self, '_initialized'):
             super().__init__(
-                tool_types=[ToolType.AMAZON_PRODUCTS_SEARCH_BY_SUPERLINKED],
+                tool_types=[],
                 edge_types=[],
-                node_types=[NodeType.AGENT]
+                node_types=[NodeType.SUPERVISOR]
             )
             self._workflow = None
-            self._initialized = True
+            self._initialized = True        
 
     @lru_cache(maxsize=1)
     def prepare(self):
         """Initialize workflow components and configure the graph structure."""
         self._workflow = StateGraph(AgentState)
-            
         events = self.setup_events()
-        tools, _, nodes = events
-        # Dynamic injection of tools into the agent node
-        agent = self.inject_tools_and_template(tools, nodes[NodeType.AGENT], prompts.AGENT_PROMPT_BY_SUPERLINKED)
-        self._workflow.add_node("agent", agent)
-
-        self._workflow.set_entry_point('agent')
-        self._workflow.add_edge(START, "agent")
-        self._workflow.add_edge("agent", END)
-
+        _, _, nodes = events
+        
+        self._workflow.add_node("supervisor", nodes[NodeType.SUPERVISOR])
+        self._workflow.add_node("amazon_products_agent", graph_search_by_superlinked)
+        self._workflow.add_node("blog_post_agent", graph_blog)
+        
+        self._workflow.add_edge(START, "supervisor")
+        
+        # Add edges from agents directly to END
+        self._workflow.add_edge("blog_post_agent", END)
+        self._workflow.add_edge("amazon_products_agent", END)        
+        
     def process(self, input_state: Dict[str, Any]) -> Dict[str, Any]:
+        """Process input through the workflow"""
         self.prepare()
         return AgentFactory.create_agent(self._workflow, input_state)
 
@@ -52,7 +57,6 @@ class SearchAmazonProductsAgentBySuperlinked(BaseAgent):
         self.prepare()
         return self._workflow.compile()
 
-agent = SearchAmazonProductsAgentBySuperlinked()
+agent = SupervisorAgent()
 
-# Initialize graph for LangGraph Studio
 graph = agent.studio()

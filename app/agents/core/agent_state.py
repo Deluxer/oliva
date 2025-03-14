@@ -10,3 +10,4 @@ class AgentState(TypedDict):
     rewrite_count: int
     tools: list[ToolType]
     explanation: str
+    next: str
