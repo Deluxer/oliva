@@ -6,7 +6,6 @@ class AgentFactory:
     @staticmethod
     def create_agent(workflow: StateGraph, input_data: dict):
         """Execute the agent workflow without recompiling it"""
-
         current_query = input_data.get("query", "")
 
         if not isinstance(current_query, str) or not current_query.strip():
@@ -15,9 +14,10 @@ class AgentFactory:
         graph = workflow.compile()
 
         formatted_input = {
-            "messages": [HumanMessage(content=str(current_query))],
+            "messages": ["user", current_query],
             "tools": input_data.get("tools", []),
-            "rewrite_count": 0,
+            "template": input_data.get("template", ""),
+            "next": "agent"
         }
 
         return invoke(graph, formatted_input)

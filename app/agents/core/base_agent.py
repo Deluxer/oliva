@@ -69,7 +69,7 @@ class BaseAgent():
 
         return AgentEvents.mapper(tools, edges, nodes)
 
-    def inject_tools_in_node(self, tools, target_node):
+    def inject_tools_and_template(self, tools, target_node, template):
         """Create a wrapper node that injects tools into the state before execution.
         
         Args:
@@ -81,5 +81,6 @@ class BaseAgent():
         """
         def wrapped_node(state: AgentState):
             state["tools"] = tools
+            state["template"] = template
             return target_node(state)
         return wrapped_node

@@ -8,6 +8,7 @@ class NodeType(Enum):
     AGENT = "agent"
     GENERATE = "generate"
     REWRITE = "rewrite"
+    SUPERVISOR = "supervisor"
 
 class ToolType(Enum):
     BLOG_SEARCH = "blog_search"

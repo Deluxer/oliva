@@ -6,6 +6,7 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from app.agents.core.base_agent import BaseAgent
 from app.agents.langchain.factory import AgentFactory
 from app.utils.types import ToolType, EdgeType, NodeType
+from app.utils.prompts import prompts
 
 class SearchAmazonProductsAgentByJson(BaseAgent):
     """Agent specialized in searching amazon products"""
@@ -33,7 +34,7 @@ class SearchAmazonProductsAgentByJson(BaseAgent):
 
         events = self.setup_events()
         tools, edges, nodes = events
-        agent = self.inject_tools_in_node(tools, nodes[NodeType.AGENT])
+        agent = self.inject_tools_and_template(tools, nodes[NodeType.AGENT], prompts.AGENT_PROMPT_BY_JSON)
 
         self._workflow.add_node("agent", agent)
         self._workflow.add_node("retrieve", ToolNode(tools))

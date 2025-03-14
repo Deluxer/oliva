@@ -1,34 +1,43 @@
 from typing import Any, Dict
 import logging
-from importlib import import_module
 from app.agents.langchain.interface.base_provider import BaseProvider
 from app.utils.types import ToolType
 
-logger = logging.getLogger(__name__)
+# Explicitly import tool functions instead of using import_module
+from app.agents.langchain.tools.blog_posts import (
+    search_in_blog_posts_tool,
+    search_in_blog_posts_tool_advance,
+    search_in_blog_posts_tool_summary,
+)
+from app.agents.langchain.tools.amazon_products_search import (
+    by_json,
+    by_superlinked,
+)
 
 class ToolProvider(BaseProvider[ToolType]):
     """Provider for all available tools"""
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
 
     def __init__(self):
-        self._tool_imports: Dict[ToolType, tuple[str, str]] = {
-            ToolType.BLOG_SEARCH: ("app.agents.langchain.tools.blog_posts", "search_in_blog_posts_tool"),
-            ToolType.BLOG_ADVANCE_SEARCH: ("app.agents.langchain.tools.blog_posts", "search_in_blog_posts_tool_advance"),
-            ToolType.BLOG_SUMMARY: ("app.agents.langchain.tools.blog_posts", "search_in_blog_posts_tool_summary"),
-            ToolType.AMAZON_PRODUCTS_SEARCH_BY_JSON: ("app.agents.langchain.tools.amazon_products_search", "by_json"),
-            ToolType.AMAZON_PRODUCTS_SEARCH_BY_SUPERLINKED: ("app.agents.langchain.tools.amazon_products_search", "by_superlinked"),
+        # Store function references directly instead of module paths
+        self._tool_imports: Dict[ToolType, Any] = {
+            ToolType.BLOG_SEARCH: search_in_blog_posts_tool,
+            ToolType.BLOG_ADVANCE_SEARCH: search_in_blog_posts_tool_advance,
+            ToolType.BLOG_SUMMARY: search_in_blog_posts_tool_summary,
+            ToolType.AMAZON_PRODUCTS_SEARCH_BY_JSON: by_json,
+            ToolType.AMAZON_PRODUCTS_SEARCH_BY_SUPERLINKED: by_superlinked,
         }
         super().__init__()
+        self._initialized = True
 
     def _initialize_items(self) -> None:
-        """Initialize tools lazily by storing function names without calling them"""
-        self._items = {}
-
-        for tool_type, (module_path, func_name) in self._tool_imports.items():
-            try:
-                module = import_module(module_path)
-                self._items[tool_type] = getattr(module, func_name)
-            except (ImportError, AttributeError) as e:
-                logger.error(f"Failed to import tool {tool_type}: {e}")
+        """Initialize tools lazily by storing function references"""
+        self._items = self._tool_imports.copy()
 
     def get_items(self) -> Dict[ToolType, Any]:
         """Get all tools (as function references, not executed)"""
