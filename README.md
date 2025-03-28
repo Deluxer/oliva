@@ -17,7 +17,7 @@ Oliva is a multi-agent assistant that helps users find products on Qdrant databa
 <tbody>
   <tr>
     <td>Database Population</td>
-    <td>Follow the setup instructions in the <a href="https://github.com/decodingml/tabular-semantic-search-tutorial">tabular-semantic-search-tutorial</a></td>
+    <td>Follow the setup instructions in the <a href="https://github.com/decodingml/tabular-semantic-search-tutorial">tabular-semantic-search-tutorial</a> or download the snapshot in <code>assets/snapshot.zip</code></td>
   </tr>
   <tr>
     <td>Qdrant</td>
@@ -205,3 +205,44 @@ make agent-search-by-json
   </tr>
 </tbody>
 </table>
+
+🔥 Oliva Multi-Agent Supervisor
+
+
+
+The Agent era is here! 🚀 Start exploring the Oliva Agent project and dive deep into multi-agent architectures. 
+
+
+
+Check out the repo 👉 https://github.com/Deluxer/oliva
+
+
+
+Get started, practice, and test with this project today!
+
+
+
+Discover the latest concepts from LangChain, all implemented in one place:
+
+- Subgraphs
+
+- Multi-Agent Architecture
+
+- LangGraph Studio
+
+...and more!
+
+
+
+How does it work?
+
+💡 Each agent communicates with a single supervisor agent.
+
+💡 The supervisor agent decides which agent should be called next.
+
+Additional tools:
+Superlinked for semantic search and Qdrant for vector storage
+
+
+
+Feel free to share you 
