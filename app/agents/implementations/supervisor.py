@@ -1,7 +1,7 @@
 from langgraph.graph import END, START, StateGraph
 from app.agents.core.agent_state import AgentState
 from functools import lru_cache
-from typing import Dict, Any, TypedDict
+from typing import Dict, Any
 from rich import print as rprint
 
 from app.agents.core.base_agent import BaseAgent
@@ -43,9 +43,8 @@ class SupervisorAgent(BaseAgent):
         
         self._workflow.add_edge(START, "supervisor")
         
-        # Add edges from agents directly to END
         self._workflow.add_edge("blog_post_agent", END)
-        self._workflow.add_edge("amazon_products_agent", END)        
+        self._workflow.add_edge("amazon_products_agent", END)
         
     def process(self, input_state: Dict[str, Any]) -> Dict[str, Any]:
         """Process input through the workflow"""

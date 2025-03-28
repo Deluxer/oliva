@@ -1,14 +1,14 @@
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.vectorstores import Chroma
 from langchain_openai import OpenAIEmbeddings
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
+from typing import List
+from langchain_core.documents import Document
 
 from app.utils.constants import constants
 
 load_dotenv()
 
-# Cache the retriever instance
 _retriever = None
 
 def url_retriever():
@@ -17,23 +17,32 @@ def url_retriever():
     
     if _retriever is not None:
         return _retriever
-        
-    docs = [WebBaseLoader(url).load() for url in constants.URLS]
-    docs_list = [item for sublist in docs for item in sublist]
+    
+    docs_list: List[Document] = []
+    for url in constants.URLS:
+        loader = WebBaseLoader(
+            url,
+            header_template={"User-Agent": "Mozilla/5.0"},
+            verify_ssl=False
+        )
+        docs = loader.load()
+        docs_list.extend(docs)
 
-    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-        chunk_size=constants.CHUNK_SIZE,
-        chunk_overlap=constants.CHUNK_OVERLAP
-    )
-    doc_splits = text_splitter.split_documents(docs_list)
-
-    # Create vectorstore and initialize retriever
     vectorstore = Chroma.from_documents(
-        documents=doc_splits,
-        # collection_name="rag-chroma",
-        embedding=OpenAIEmbeddings(model=constants.EMBEDDING_MODEL),
+        documents=docs_list,
+        embedding=OpenAIEmbeddings(
+            model=constants.EMBEDDING_MODEL,
+            dimensions=1536
+        ),
     )
     
-    # Cache and return the retriever
-    _retriever = vectorstore.as_retriever()
+    # CONFIGURE RETRIEVER WITH IMPROVED SEARCH PARAMETERS
+    _retriever = vectorstore.as_retriever(
+        search_type="mmr",  # Use Maximum Marginal Relevance
+        search_kwargs={
+            "k": 4,  # Return top 4 most relevant chunks
+            "lambda_mult": 0.7  # Balance between relevance and diversity
+        }
+    )
+    
     return _retriever

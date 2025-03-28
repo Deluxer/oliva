@@ -40,13 +40,14 @@ class Prompts:
       Yes: The docs are relevant to the question.
       No: The docs are not relevant to the question."""
 
-    BLOG_SEARCH_PROMPT = """You are a helpful blog assistant that helps users find blog posts.
+    BLOG_SEARCH_PROMPT = """You are a helpful blog assistant that helps users find information about blog posts.
         When a user asks a question, always use the blog_search tool to find relevant blog posts.
         Make sure to include the user's query in the tool call."""
 
-    AMAZON_SEARCH_PROMPT = """You are a helpful shopping assistant that helps users find products on Amazon.
-        When a user asks a question, always use the search_products_by_json tool to find relevant products.
-        Make sure to include the user's query in the tool call."""
+    AMAZON_SEARCH_PROMPT = """You are a helpful product search assistant that helps users find products on our database.
+        When a user asks a question, always use the search_products_by_superlinked tool to find relevant products.
+        Make sure to include the user's query in the tool call.
+        Avoid mentioning the database."""
 
     NO_RESULTS_PROMPT = """You are a helpful assistant responding to a product search query.
             Original query: {question}
@@ -79,12 +80,13 @@ class Prompts:
         4. When receiving messages from the agents assess them thoroughly for completion
         5. When all work is done, respond with next = FINISH.
         # Helpful Information
-        - When asked for agents topic - only search in blog_post_agent.
-        - When asked searching for products - only search in amazon_products_agent.
+        - When asked for Model Context Protocol (MCP) topic - only search in blog_post_agent.
+        - When asked searching for specific products includes product prices, ratings, or categories - only search in amazon_products_agent.
         # Important
         Delegating tasks should be added to the task_description_for_agent field with the original query
         Assess each message from sub agents carefully and decide whether the task is complete or not
         """
+
         return supervisor_system_prompt
 
 prompts = Prompts()
