@@ -1,15 +1,13 @@
 from langchain_openai import ChatOpenAI
-from langgraph.graph import END
+from langgraph.graph import END, MessagesState
 from langgraph.types import Command
 from typing import TypedDict, Literal
 from app.utils.constants import constants
 from app.utils.prompts import prompts
 from app.agents.core.agent_state import AgentState
 
-# Create LLM instance
 supervisor_llm = ChatOpenAI(model=constants.LLM_MODEL)
 
-# Define the supervisor output schema
 class SupervisorOutput(TypedDict):
     next: Literal["blog_post_agent", "amazon_products_agent", "FINISH"]
     task_description_for_agent: str
@@ -26,17 +24,17 @@ def supervisor(state: AgentState) -> Command[Literal["blog_post_agent", "amazon_
     Otherwise, it appends the tailored instructions to the conversation history
     and returns a command to go to the next agent.
     """
-
+    if state.get("next") == "FINISH":
+        return Command(goto=END, update={"next": END})
+    
     members = ["blog_post_agent", "amazon_products_agent"]
-    agent_members_prompt_final = """
+    agent_members_prompt_final = f"""
     blog_post_agent:
         - Prompt: {prompts.BLOG_SEARCH_PROMPT}
     amazon_products_agent:
         - Prompt: {prompts.AMAZON_SEARCH_PROMPT}
     """
     supervisor_system_prompt = prompts.supervisor_system_prompt(members, agent_members_prompt_final)
-
-
     messages = [{"role": "system", "content": supervisor_system_prompt}] + state["messages"]
     response = supervisor_llm.with_structured_output(SupervisorOutput).invoke(messages)
     goto = response["next"]

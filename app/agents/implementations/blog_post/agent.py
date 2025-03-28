@@ -1,5 +1,5 @@
 from functools import lru_cache
-from app.agents.core.agent_state import AgentState
+from app.agents.core.agent_state import SubGraphAgentState
 from app.agents.core.base_agent import BaseAgent
 from app.utils.types import EdgeType, NodeType, ToolType
 from langgraph.graph import END, START, StateGraph
@@ -31,7 +31,7 @@ class BlogPostAgent(BaseAgent):
     @lru_cache(maxsize=1)
     def prepare(self):
         """Prepare the agent workflow only when needed"""
-        self._workflow = StateGraph(AgentState)
+        self._workflow = StateGraph(SubGraphAgentState)
         events = self.setup_events()
         tools, _, nodes = events
 

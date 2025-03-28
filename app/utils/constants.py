@@ -4,16 +4,15 @@ import os
 
 class Constants:
     """Constants for LangChain integration"""
-    # Configuration constants
-    CHUNK_SIZE = 100
-    CHUNK_OVERLAP = 50
+    CHUNK_SIZE = 750
+    CHUNK_OVERLAP = 100
     EMBEDDING_MODEL = "text-embedding-3-small"
     LLM_MODEL = "gpt-4o-mini"
     OPENAI_API_KEY = SecretStr(os.getenv("OPENAI_API_KEY"))
 
-    # URLs for document loading
     URLS = [
-        "https://blog.langchain.dev/what-is-an-agent/",
+        # "https://blog.langchain.dev/what-is-an-agent/",
+        "https://huggingface.co/blog/Kseniase/mcp",
     ]
     
     PROCESSED_DATASET_PATH: Path = (
@@ -92,5 +91,4 @@ class Constants:
         "Women",
     ]
 
-# Create a singleton instance
 constants = Constants()

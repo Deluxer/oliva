@@ -24,7 +24,7 @@ dependencies = [
     "superlinked==17.1.0",
     "langchain>=0.3.0",
     "langchain-community>=0.0.10",
-    "langchain-openai>=0.0.5",
+    "langchain-openai>=0.3.10",
     "langchainhub>=0.1.14",
     "langchain-text-splitters>=0.0.1",
     "chromadb",
