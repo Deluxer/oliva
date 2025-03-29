@@ -40,8 +40,8 @@ def url_retriever():
     _retriever = vectorstore.as_retriever(
         search_type="mmr",  # Use Maximum Marginal Relevance
         search_kwargs={
-            "k": 4,  # Return top 4 most relevant chunks
-            "lambda_mult": 0.7  # Balance between relevance and diversity
+            "k": 2,  # Return top 4 most relevant chunks
+            "fetch_k": 2,  # Fetch 4 chunks from the index
         }
     )
     
