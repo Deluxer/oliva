@@ -11,7 +11,7 @@ class Constants:
     OPENAI_API_KEY = SecretStr(os.getenv("OPENAI_API_KEY"))
 
     URLS = [
-        # "https://blog.langchain.dev/what-is-an-agent/",
+        "https://blog.langchain.dev/what-is-an-agent/",
         "https://huggingface.co/blog/Kseniase/mcp",
     ]
     

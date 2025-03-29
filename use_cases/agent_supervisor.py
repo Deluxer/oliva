@@ -6,8 +6,8 @@ if __name__ == "__main__":
     try:
         result = agent.process({
             # "query": "products with a price lower than 100 and a rating bigger than 4"
-            # "query": "How Harrison Chase defines an agent?"
-            "query": 'prvide information about "Before MCP, How Were AI Systems Handling Context And Tool Access?" topic'
+            "query": "How Harrison Chase defines an agent?"
+            # "query": 'prvide information about "Before MCP, How Were AI Systems Handling Context And Tool Access?" topic'
         })
         print(result)
     except Exception as e:

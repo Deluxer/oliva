@@ -45,10 +45,8 @@ def search_in_blog_posts_tool(query: str):
     Returns:
         Formatted string containing relevant blog post content
     """
-    print("Search query:", query)
     retriever = url_retriever()
     docs = retriever.invoke(query)
-    print("Retrieved docs from Vector Store:", len(docs), "results")
     return format_search_results(docs)
 
 @tool('blog_advance_search', description="Advanced search in blog posts with metadata filtering.")

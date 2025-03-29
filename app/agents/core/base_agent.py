@@ -6,6 +6,7 @@ from app.agents.langchain.tools.tools import ToolProvider
 from app.agents.langchain.edges.edges import EdgeProvider
 from app.agents.langchain.nodes.nodes import NodeProvider
 from app.utils.types import EdgeType, ToolType, NodeType
+from langgraph.types import Command
 
 class BaseAgent():
     _instance = None
@@ -80,7 +81,14 @@ class BaseAgent():
             A wrapped node function that ensures tools are available in state
         """
         def wrapped_node(state: AgentState):
-            state["tools"] = tools
-            state["template"] = template
-            return target_node(state)
+            command = Command(
+                goto=None,
+                update={
+                    "tools": tools,
+                    "template": template
+                }
+            )
+            
+            return target_node(state | command.update)
+            
         return wrapped_node

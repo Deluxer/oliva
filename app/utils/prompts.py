@@ -81,6 +81,7 @@ class Prompts:
         5. When all work is done, respond with next = FINISH.
         # Helpful Information
         - When asked for Model Context Protocol (MCP) topic - only search in blog_post_agent.
+        - When asked for Agent definition or related topic - only search in blog_post_agent.
         - When asked searching for specific products includes product prices, ratings, or categories - only search in amazon_products_agent.
         # Important
         Delegating tasks should be added to the task_description_for_agent field with the original query

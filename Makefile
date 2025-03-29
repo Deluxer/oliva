@@ -9,3 +9,6 @@ agent-search-by-json:
 
 agent-blog-post:
 	uv run python -m use_cases.agent_blog_post_url
+
+agent-supervisor:
+	uv run python -m use_cases.agent_supervisor
