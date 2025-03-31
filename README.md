@@ -2,7 +2,7 @@
 
 Oliva is a multi-agent assistant that helps users find products on Qdrant database using Langchain and superlinked.
 <p align="center">
-  <img src="assets/oliva_architecture.png" alt="Oliva architecture" width="800">
+  <img src="assets/oliva_arquitecture_v2.png" alt="Oliva architecture" width="800">
 </p>
 
 ### Requirements:
