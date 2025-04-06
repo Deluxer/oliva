@@ -1,6 +1,8 @@
-# Oliva Multi-Agent Assistant
+<div align="center">
+  <h1>Oliva Multi-Agent Assistant</h1>
+</div>
+<p align="center">Oliva is a multi-agent assistant that helps users find products on Qdrant database using Langchain and superlinked.</p>
 
-Oliva is a multi-agent assistant that helps users find products on Qdrant database using Langchain and superlinked.
 <p align="center">
   <img src="assets/oliva_arquitecture_v2.png" alt="Oliva architecture" width="800">
 </p>
@@ -205,3 +207,7 @@ make agent-search-by-json
   </tr>
 </tbody>
 </table>
+
+## 📚 Contributing
+
+This project is open-source and welcomes contributions from the community. For more details on how to contribute, please refer to the [Contributing Guide](./CONTRIBUTING.md).
