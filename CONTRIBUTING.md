@@ -19,9 +19,9 @@ Every contribution matters, no matter how small! Here are some ways you can help
 
 1. **Fork & Clone**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/oliva.git
+   git clone https://github.com/Deluxer/oliva.git
    cd oliva
-   git remote add upstream https://github.com/ORIGINAL_OWNER/oliva.git
+   git remote add upstream https://github.com/Deluxer/oliva.git
    ```
 
 2. **Set Up Environment**
