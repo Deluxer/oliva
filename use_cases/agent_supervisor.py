@@ -22,11 +22,12 @@ def agent_supervisor_graph():
         config = {
             "configurable": {
                 "thread_id": "1",
-                "user_id": "1"  # Add user_id to config
+                "user_id": "1",
+                "chat_id": "1"
             }
         }
         result = graph.invoke(
-            {"messages": [{"role": "user", "content": "products with a price lower than 100 and a rating bigger than 4"}]},
+            {"messages": [{"role": "user", "content": "list of 5 playstation products"}]},
             config,
         )
         if "messages" in result:
@@ -43,4 +44,4 @@ def agent_supervisor_graph():
         print(f"\nTotal execution time: {execution_time:.2f} seconds")        
 
 if __name__ == "__main__":
-    agent_supervisor_2()
+    agent_supervisor_graph()

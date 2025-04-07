@@ -17,9 +17,10 @@ from livekit.agents.llm import (
     ChatMessage,
     FunctionContext
 )
-from livekit.agents.pipeline import VoicePipelineAgent
-from livekit.plugins import deepgram, openai, silero
-from app.agents.implementations.search_amazon_products.agent_by_superlinked import SearchAmazonProductsAgentBySuperlinked
+from livekit.agents.pipeline import VoicePipelineAgent, AgentCallContext
+from livekit.plugins import deepgram, openai, silero, elevenlabs
+from app.agents.implementations.supervisor import graph
+import os
 
 from app.utils.prompts import Prompts
 
@@ -41,18 +42,44 @@ class SearchProducts(FunctionContext):
             llm.TypeInfo(description="Search for products by title, description, category, price, rating, and review"),
         ],
     ):  
+        agent = AgentCallContext.get_current().agent
+        local_participant = agent._room.local_participant
+        
         try:
-            agent = SearchAmazonProductsAgentBySuperlinked()
-            result = agent.process({
-                "query": search_products
-            })
+            #TODO: pass configurable options from livekit
+            config = {
+                "configurable": {
+                    "thread_id": local_participant.identity,
+                    "user_id": local_participant.identity,
+                    "chat_id": local_participant.identity
+                }
+            }
 
-            return result
+            input_state = {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": search_products
+                    }
+                ]
+            }
+
+            result = graph.invoke(
+                input_state,
+                config
+            )
+
+            if "messages" in result and result["messages"]:
+                message = result["messages"][-1]
+                message.pretty_print()
+                return message.content
+            else:
+                logger.warning("No messages in result from graph invocation")
+                return "I apologize, but I couldn't process your request properly."
+
         except Exception as e:
-            print(f"Superlinked call failed: {e}")
-
-        return None
-
+            logger.error(f"Error during graph invocation: {str(e)}", exc_info=True)
+            return "I encountered an error while processing your request. Please try again."
 
 async def entrypoint(ctx: JobContext):
     fnc_ctx = SearchProducts()
@@ -68,16 +95,31 @@ async def entrypoint(ctx: JobContext):
     participant = await ctx.wait_for_participant()
     logger.info(f"starting voice assistant for participant {participant.identity}")
 
-    dg_model = "nova-3-general"
+    dg_model = "nova-2-general"
     if participant.kind == rtc.ParticipantKind.PARTICIPANT_KIND_SIP:
         # use a model optimized for telephony
         dg_model = "nova-2-phonecall"
 
+    voice = elevenlabs.Voice(
+        id="ErXwobaYiN019PkySvjV",
+        name="Antoni",
+        category="premade",
+        settings=elevenlabs.VoiceSettings(
+            stability=0.71,
+            speed=1.0,
+            similarity_boost=0.5,
+            style=0.0,
+            use_speaker_boost=True,
+        ),
+    )
+
     agent = VoicePipelineAgent(
         vad=ctx.proc.userdata["vad"],
-        stt=deepgram.STT(model=dg_model),
+        stt=deepgram.STT(model=dg_model, endpointing_ms=200, no_delay=True, energy_filter=True, interim_results=True),
+        # stt=openai.STT(model="whisper-1"),
         llm=openai.LLM(),
         tts=openai.TTS(),
+        # tts=elevenlabs.TTS(voice=voice, model="eleven_flash_v2_5", api_key=os.getenv("ELEVENLABS_API_KEY"), base_url="https://api.elevenlabs.io/v1"),
         chat_ctx=initial_ctx,
         fnc_ctx=fnc_ctx
     )
@@ -120,6 +162,6 @@ if __name__ == "__main__":
         WorkerOptions(
             entrypoint_fnc=entrypoint,
             prewarm_fnc=prewarm,
-            job_memory_warn_mb=1300,
+            job_memory_warn_mb=1500,
         ),
     )
