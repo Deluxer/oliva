@@ -2,13 +2,14 @@ from langgraph.graph import END, START, StateGraph
 from app.agents.core.agent_state import AgentState
 from functools import lru_cache
 from typing import Dict, Any
-from rich import print as rprint
 
 from app.agents.core.base_agent import BaseAgent
 from app.agents.implementations.blog_post.agent import graph as graph_blog
 from app.agents.implementations.search_amazon_products.agent_by_superlinked import graph as graph_search_by_superlinked
 from app.agents.langchain.factory import AgentFactory
 from app.utils.types import NodeType
+from app.agents.langchain.memory.long_term import long_term_memory
+from functools import partial
 
 class SupervisorAgent(BaseAgent):
     """Agent specialized in supervising other agents"""
@@ -37,7 +38,7 @@ class SupervisorAgent(BaseAgent):
         events = self.setup_events()
         _, _, nodes = events
         
-        self._workflow.add_node("supervisor", nodes[NodeType.SUPERVISOR])
+        self._workflow.add_node("supervisor", partial(nodes[NodeType.SUPERVISOR], store=long_term_memory))
         self._workflow.add_node("amazon_products_agent", graph_search_by_superlinked)
         self._workflow.add_node("blog_post_agent", graph_blog)
         

@@ -12,6 +12,6 @@ def by_json(query: str):
 
 @tool('search_products_by_superlinked', description="Tool for searching products based on a user's query.")
 def by_superlinked(query: str):
-    from app.agents.langchain.vector_store.sl_amazon_products_retriever import superlinked_amazon_products_retriever
     """Search for Amazon products using Superlinked"""
+    from app.agents.langchain.vector_store.sl_amazon_products_retriever import superlinked_amazon_products_retriever
     return superlinked_amazon_products_retriever(query)
