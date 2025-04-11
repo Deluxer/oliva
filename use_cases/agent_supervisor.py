@@ -21,13 +21,12 @@ def agent_supervisor_graph():
     try:
         config = {
             "configurable": {
-                "thread_id": "1",
                 "user_id": "1",
-                "chat_id": "1"
+                "chat_id": "2"
             }
         }
         result = graph.invoke(
-            {"messages": [{"role": "user", "content": "list of 5 playstation products"}]},
+            {"messages": [{"role": "user", "content": "3 products with a price lower than 100 and a rating greater than 4"}]},
             config,
         )
         if "messages" in result:

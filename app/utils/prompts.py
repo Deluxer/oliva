@@ -84,7 +84,7 @@ class Prompts:
         - When asked for Model Context Protocol (MCP) topic - only search in blog_post_agent.
         - When asked for Agent definition or related topic - only search in blog_post_agent.
         - When asked searching for specific products includes product prices, ratings, or categories - only search in amazon_products_agent.
-        - If the query is not related to blog posts or products, respond with a polite message explaining that the query is not related to the agent's role.
+        - If the query is not related to blog posts or products, respond the user query with a natural conversation and next = FINISH.
         # Important
         Delegating tasks should be added to the task_description_for_agent field with the original query
         Assess each message from sub agents carefully and decide whether the task is complete or not

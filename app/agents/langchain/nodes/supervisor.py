@@ -84,7 +84,7 @@ def supervisor(
     goto = response["next"]
 
     if goto == "FINISH":
-        return Command(goto=END, update={"next": END})
+        return Command(goto=END, update={"next": END, "messages": response["message_completion_summary"]})
 
-    new_messages = [{"role": "user", "content": response["task_description_for_agent"]}]
+    new_messages = [{"role": "assistant", "content": response["task_description_for_agent"]}]
     return Command(goto=goto, update={"next": goto, "messages": new_messages})

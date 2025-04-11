@@ -1,7 +1,7 @@
 <div align="center">
   <h1>Oliva Multi-Agent Assistant</h1>
 </div>
-<p align="center">Oliva is a multi-agent assistant that helps users find products on Qdrant database using Langchain and superlinked.</p>
+<p align="center">Oliva is a multi-agent assistant that combines different agents to handle various tasks. These agents can be used to perform various tasks such as semantic search, text generation, question answering, and more. The project is designed to be flexible and extensible, allowing you to add more agents as needed.</p>
 
 <p align="center">
   <img src="assets/oliva_arquitecture_v2.png" alt="Oliva architecture" width="800">
@@ -148,6 +148,11 @@ The project follows a modular architecture implementing an agentic RAG (Retrieva
 The system implements a graph-based workflow where each agent processes state through a series of nodes (functions) connected by conditional edges, supporting dynamic routing based on the agent's decisions.
 
 ## Use cases
+
+Langchain workflow by supervisor agent
+```bash
+make agent-supervisor
+```
 
 Langchain workflow by superlinked
 ```bash

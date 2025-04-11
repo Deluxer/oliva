@@ -1,4 +1,5 @@
 from langgraph.graph import END, START, StateGraph
+from langgraph.prebuilt import tools_condition
 from app.agents.core.agent_state import AgentState
 from functools import lru_cache
 from typing import Dict, Any
@@ -43,7 +44,16 @@ class SupervisorAgent(BaseAgent):
         self._workflow.add_node("blog_post_agent", graph_blog)
         
         self._workflow.add_edge(START, "supervisor")
-        
+        self._workflow.add_conditional_edges(
+            "supervisor",
+            tools_condition,
+            {
+                "amazon_products_agent": "amazon_products_agent", 
+                "blog_post_agent": "blog_post_agent", 
+                END: END
+            }
+        )
+        self._workflow.add_edge("supervisor", END)
         self._workflow.add_edge("blog_post_agent", END)
         self._workflow.add_edge("amazon_products_agent", END)
         
