@@ -49,7 +49,6 @@ class SearchProducts(FunctionContext):
             #TODO: pass configurable options from livekit
             config = {
                 "configurable": {
-                    "thread_id": local_participant.identity,
                     "user_id": local_participant.identity,
                     "chat_id": local_participant.identity
                 }
@@ -100,7 +99,7 @@ async def entrypoint(ctx: JobContext):
         # use a model optimized for telephony
         dg_model = "nova-2-phonecall"
 
-    voice = elevenlabs.Voice(
+    elevenlabs_voice = elevenlabs.Voice(
         id="ErXwobaYiN019PkySvjV",
         name="Antoni",
         category="premade",
@@ -112,14 +111,13 @@ async def entrypoint(ctx: JobContext):
             use_speaker_boost=True,
         ),
     )
+    # elevenlabs_tts = elevenlabs.TTS(voice=elevenlabs_voice, model="eleven_flash_v2_5", api_key=os.getenv("ELEVENLABS_API_KEY"), base_url="https://api.elevenlabs.io/v1")
 
     agent = VoicePipelineAgent(
         vad=ctx.proc.userdata["vad"],
         stt=deepgram.STT(model=dg_model, endpointing_ms=200, no_delay=True, energy_filter=True, interim_results=True),
-        # stt=openai.STT(model="whisper-1"),
         llm=openai.LLM(),
         tts=openai.TTS(),
-        # tts=elevenlabs.TTS(voice=voice, model="eleven_flash_v2_5", api_key=os.getenv("ELEVENLABS_API_KEY"), base_url="https://api.elevenlabs.io/v1"),
         chat_ctx=initial_ctx,
         fnc_ctx=fnc_ctx
     )
